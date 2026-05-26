@@ -2,6 +2,7 @@ class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
   devise :database_authenticatable,
+         :recoverable,
          :jwt_authenticatable,
          :validatable,
          jwt_revocation_strategy: self

@@ -55,6 +55,17 @@ RSpec.configure do |config|
                 }
               }
             }
+          },
+          message_response: {
+            type: :object,
+            properties: {
+              data: {
+                type: :object,
+                properties: {
+                  message: { type: :string }
+                }
+              }
+            }
           }
         }
       },

@@ -4,6 +4,82 @@ info:
   title: SGM - Sistema de Gerenciamento para Marmitaria API
   version: v1
 paths:
+  "/api/v1/auth/password":
+    post:
+      summary: Requests password reset instructions
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '200':
+          description: request accepted
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/message_response"
+        '422':
+          description: missing email
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: caixa@sgm.test
+                  required:
+                  - email
+              required:
+              - user
+    patch:
+      summary: Resets password using a recovery token
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '200':
+          description: password reset
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/message_response"
+        '422':
+          description: invalid reset data
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    reset_password_token:
+                      type: string
+                    password:
+                      type: string
+                      example: new-password
+                    password_confirmation:
+                      type: string
+                      example: new-password
+                  required:
+                  - reset_password_token
+                  - password
+                  - password_confirmation
+              required:
+              - user
   "/api/v1/auth/login":
     post:
       summary: Authenticates a user
@@ -149,6 +225,14 @@ components:
                 type: string
               message:
                 type: string
+    message_response:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            message:
+              type: string
 servers:
 - url: http://{defaultHost}
   variables:
