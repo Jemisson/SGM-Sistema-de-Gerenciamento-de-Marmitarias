@@ -36,6 +36,72 @@ class ApplicationPolicy
     false
   end
 
+  def manage_users?
+    admin?
+  end
+
+  def manage_catalog?
+    admin? || manager?
+  end
+
+  def manage_suppliers?
+    admin? || manager?
+  end
+
+  def manage_inputs?
+    admin? || manager?
+  end
+
+  def manage_products?
+    admin? || manager?
+  end
+
+  def manage_recipes?
+    admin? || manager?
+  end
+
+  def manage_menus?
+    admin? || manager?
+  end
+
+  def view_reports?
+    admin? || manager?
+  end
+
+  def view_analytics?
+    admin? || manager?
+  end
+
+  def view_logs?
+    admin?
+  end
+
+  def view_financial?
+    manager?
+  end
+
+  def manage_cash_register?
+    manager? || cashier?
+  end
+
+  def register_sales?
+    cashier?
+  end
+
+  private
+
+  def admin?
+    user&.admin? || false
+  end
+
+  def manager?
+    user&.manager? || false
+  end
+
+  def cashier?
+    user&.cashier? || false
+  end
+
   class Scope
     def initialize(user, scope)
       @user = user

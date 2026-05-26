@@ -34,6 +34,11 @@ A documentação Swagger/OpenAPI ficará disponível em:
 /api-docs
 ```
 
+## Autorização
+
+A matriz inicial de permissões por perfil está documentada em
+[docs/api_authorization.md](docs/api_authorization.md).
+
 ## Testes
 
 Para executar a suíte de testes:
