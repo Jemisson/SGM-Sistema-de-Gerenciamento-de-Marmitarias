@@ -73,7 +73,7 @@ class ApplicationPolicy
   end
 
   def view_logs?
-    admin?
+    admin? || manager?
   end
 
   def view_financial?

@@ -4,6 +4,76 @@ info:
   title: SGM - Sistema de Gerenciamento para Marmitaria API
   version: v1
 paths:
+  "/api/v1/audit_logs":
+    get:
+      summary: Lists audit logs
+      tags:
+      - Audit Logs
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      - name: user_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: action
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: start_date
+        in: query
+        required: false
+        example: '2026-05-01T00:00:00Z'
+        schema:
+          type: string
+      - name: end_date
+        in: query
+        required: false
+        example: '2026-05-31T23:59:59Z'
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: audit logs listed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/audit_log"
+                  meta:
+                    "$ref": "#/components/schemas/pagination_meta"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
   "/api/v1/auth/password":
     post:
       summary: Requests password reset instructions
@@ -233,6 +303,43 @@ components:
           properties:
             message:
               type: string
+    audit_log:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          "$ref": "#/components/schemas/user"
+        action:
+          type: string
+        auditable_type:
+          type: string
+          nullable: true
+        auditable_id:
+          type: integer
+          nullable: true
+        ip_address:
+          type: string
+          nullable: true
+        user_agent:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+        occurred_at:
+          type: string
+          format: date-time
+    pagination_meta:
+      type: object
+      properties:
+        page:
+          type: integer
+        per_page:
+          type: integer
+        total_count:
+          type: integer
+        total_pages:
+          type: integer
 servers:
 - url: http://{defaultHost}
   variables:

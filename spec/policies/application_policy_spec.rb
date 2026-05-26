@@ -41,10 +41,13 @@ RSpec.describe ApplicationPolicy do
       expect(policy.view_financial?).to be(true)
     end
 
-    it "does not allow user management, logs or direct sales" do
+    it "does not allow user management or direct sales" do
       expect(policy.manage_users?).to be(false)
-      expect(policy.view_logs?).to be(false)
       expect(policy.register_sales?).to be(false)
+    end
+
+    it "allows log visualization" do
+      expect(policy.view_logs?).to be(true)
     end
   end
 

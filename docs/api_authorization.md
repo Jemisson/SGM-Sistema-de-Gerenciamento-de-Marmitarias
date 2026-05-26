@@ -24,7 +24,7 @@ Perfis disponíveis:
 | Visualizar relatórios | Sim | Sim | Não |
 | Visualizar análises | Sim | Sim | Não |
 | Visualizar financeiro | Não | Sim | Não |
-| Visualizar logs | Sim | Não | Não |
+| Visualizar logs | Sim | Sim | Não |
 
 ## Policies base
 

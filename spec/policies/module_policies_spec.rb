@@ -39,9 +39,9 @@ RSpec.describe "Module policies" do
     expect(AnalyticsPolicy.new(cashier, :analytics).show?).to be(false)
   end
 
-  it "limits logs to admins and financial views to managers" do
+  it "limits logs to admins and managers, and financial views to managers" do
     expect(LogPolicy.new(admin, :log).show?).to be(true)
-    expect(LogPolicy.new(manager, :log).show?).to be(false)
+    expect(LogPolicy.new(manager, :log).show?).to be(true)
     expect(LogPolicy.new(cashier, :log).show?).to be(false)
 
     expect(FinancialPolicy.new(admin, :financial).show?).to be(false)

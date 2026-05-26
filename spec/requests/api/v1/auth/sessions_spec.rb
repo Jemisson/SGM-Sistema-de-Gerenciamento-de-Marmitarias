@@ -6,12 +6,14 @@ RSpec.describe "Api::V1::Auth::Sessions", type: :request do
 
   describe "POST /api/v1/auth/login" do
     it "authenticates an active user and returns a JWT" do
-      post "/api/v1/auth/login", params: {
-        user: {
-          email: user.email,
-          password: password
+      expect do
+        post "/api/v1/auth/login", params: {
+          user: {
+            email: user.email,
+            password: password
+          }
         }
-      }
+      end.to change(AuditLog, :count).by(1)
 
       body = response.parsed_body
 
@@ -24,6 +26,11 @@ RSpec.describe "Api::V1::Auth::Sessions", type: :request do
         "email" => user.email,
         "role" => user.role,
         "active" => true
+      )
+      expect(AuditLog.last).to have_attributes(
+        user: user,
+        action: "auth.login",
+        auditable: user
       )
     end
 
@@ -114,7 +121,9 @@ RSpec.describe "Api::V1::Auth::Sessions", type: :request do
       headers = authorization_header_for(user)
       previous_jti = user.jti
 
-      delete "/api/v1/auth/logout", headers: headers
+      expect do
+        delete "/api/v1/auth/logout", headers: headers
+      end.to change(AuditLog, :count).by(1)
 
       expect(response).to have_http_status(:ok)
       expect(response.parsed_body).to eq(
@@ -123,6 +132,11 @@ RSpec.describe "Api::V1::Auth::Sessions", type: :request do
         }
       )
       expect(user.reload.jti).not_to eq(previous_jti)
+      expect(AuditLog.last).to have_attributes(
+        user: user,
+        action: "auth.logout",
+        auditable: user
+      )
 
       get "/api/v1/auth/me", headers: headers
 

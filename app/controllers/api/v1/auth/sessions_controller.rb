@@ -13,6 +13,7 @@ module Api
           token, payload = Warden::JWTAuth::UserEncoder.new.call(user, :user, nil)
           user.on_jwt_dispatch(token, payload) if user.respond_to?(:on_jwt_dispatch)
           response.set_header("Authorization", "Bearer #{token}")
+          AuditLogger.call(user: user, action: "auth.login", auditable: user, request: request)
 
           render_success(
             {
@@ -24,6 +25,7 @@ module Api
 
         def destroy
           payload = Warden::JWTAuth::TokenDecoder.new.call(bearer_token)
+          AuditLogger.call(user: current_user, action: "auth.logout", auditable: current_user, request: request)
           User.revoke_jwt(payload, current_user)
 
           render_success({ message: "Logout realizado com sucesso." })

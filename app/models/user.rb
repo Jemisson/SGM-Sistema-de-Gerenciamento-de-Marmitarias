@@ -1,6 +1,8 @@
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
+  has_many :audit_logs, dependent: :restrict_with_exception
+
   devise :database_authenticatable,
          :recoverable,
          :jwt_authenticatable,

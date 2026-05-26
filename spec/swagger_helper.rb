@@ -66,6 +66,29 @@ RSpec.configure do |config|
                 }
               }
             }
+          },
+          audit_log: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              user: { "$ref" => "#/components/schemas/user" },
+              action: { type: :string },
+              auditable_type: { type: :string, nullable: true },
+              auditable_id: { type: :integer, nullable: true },
+              ip_address: { type: :string, nullable: true },
+              user_agent: { type: :string, nullable: true },
+              metadata: { type: :object },
+              occurred_at: { type: :string, format: "date-time" }
+            }
+          },
+          pagination_meta: {
+            type: :object,
+            properties: {
+              page: { type: :integer },
+              per_page: { type: :integer },
+              total_count: { type: :integer },
+              total_pages: { type: :integer }
+            }
           }
         }
       },
