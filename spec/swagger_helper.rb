@@ -29,6 +29,33 @@ RSpec.configure do |config|
             scheme: :bearer,
             bearerFormat: :JWT
           }
+        },
+        schemas: {
+          user: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              name: { type: :string },
+              email: { type: :string },
+              role: { type: :string, enum: %w[admin manager cashier] },
+              active: { type: :boolean }
+            }
+          },
+          error_response: {
+            type: :object,
+            properties: {
+              errors: {
+                type: :array,
+                items: {
+                  type: :object,
+                  properties: {
+                    field: { type: :string },
+                    message: { type: :string }
+                  }
+                }
+              }
+            }
+          }
         }
       },
       servers: [

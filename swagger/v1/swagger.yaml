@@ -1,13 +1,156 @@
+---
 openapi: 3.0.1
 info:
   title: SGM - Sistema de Gerenciamento para Marmitaria API
   version: v1
-paths: {}
+paths:
+  "/api/v1/auth/login":
+    post:
+      summary: Authenticates a user
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '200':
+          description: authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        "$ref": "#/components/schemas/user"
+                      token:
+                        type: string
+        '401':
+          description: invalid credentials
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: caixa@sgm.test
+                    password:
+                      type: string
+                      example: password123
+                  required:
+                  - email
+                  - password
+              required:
+              - user
+  "/api/v1/auth/logout":
+    delete:
+      summary: Logs out the current user
+      tags:
+      - Authentication
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+  "/api/v1/auth/me":
+    get:
+      summary: Returns the authenticated user
+      tags:
+      - Authentication
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: authenticated user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        "$ref": "#/components/schemas/user"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  schemas:
+    user:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum:
+          - admin
+          - manager
+          - cashier
+        active:
+          type: boolean
+    error_response:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
 servers:
-  - url: http://localhost:3000
+- url: http://{defaultHost}
+  variables:
+    defaultHost:
+      default: localhost:3000
