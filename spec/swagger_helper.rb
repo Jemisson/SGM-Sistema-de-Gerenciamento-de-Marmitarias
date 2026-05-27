@@ -207,6 +207,46 @@ RSpec.configure do |config|
             },
             required: %w[ingredient]
           },
+          product: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              code: { type: :string },
+              name: { type: :string },
+              description: { type: :string, nullable: true },
+              category: {
+                type: :object,
+                properties: {
+                  id: { type: :integer },
+                  name: { type: :string, nullable: true }
+                }
+              },
+              sale_price: { type: :string },
+              active: { type: :boolean },
+              image_url: { type: :string, nullable: true },
+              created_at: { type: :string, format: "date-time", nullable: true },
+              updated_at: { type: :string, format: "date-time", nullable: true }
+            }
+          },
+          product_payload: {
+            type: :object,
+            properties: {
+              product: {
+                type: :object,
+                properties: {
+                  code: { type: :string, example: "M001" },
+                  name: { type: :string, example: "Marmita de Frango" },
+                  description: { type: :string, example: "Arroz, feijao, frango e salada" },
+                  category_id: { type: :integer },
+                  sale_price: { type: :string, example: "24.90" },
+                  active: { type: :boolean, example: true },
+                  image: { type: :string, format: :binary }
+                },
+                required: %w[code name category_id sale_price]
+              }
+            },
+            required: %w[product]
+          },
           stock_movement: {
             type: :object,
             properties: {
