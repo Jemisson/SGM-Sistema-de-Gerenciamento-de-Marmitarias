@@ -29,6 +29,13 @@ Rails.application.routes.draw do
         get :stock
         get :financial
       end
+      namespace :analytics do
+        get :abc
+        get :profitability
+        get :trends
+        get :product_performance
+        get :ingredient_consumption
+      end
       resources :stock_movements, only: %i[index create show]
       resources :suppliers
 

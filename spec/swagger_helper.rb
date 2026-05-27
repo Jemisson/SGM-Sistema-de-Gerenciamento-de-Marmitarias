@@ -514,6 +514,29 @@ RSpec.configure do |config|
               expiration_date: { type: :string, format: "date", nullable: true }
             }
           },
+          analytics_product_metric: {
+            type: :object,
+            properties: {
+              product_id: { type: :integer },
+              code: { type: :string },
+              name: { type: :string },
+              quantity_sold: { type: :integer },
+              revenue: { type: :string },
+              estimated_cost: { type: :string },
+              gross_profit: { type: :string }
+            }
+          },
+          analytics_ingredient_metric: {
+            type: :object,
+            properties: {
+              ingredient_id: { type: :integer },
+              code: { type: :string },
+              name: { type: :string },
+              unit: { type: :string },
+              quantity: { type: :string },
+              estimated_cost: { type: :string }
+            }
+          },
           menu_item: {
             type: :object,
             properties: {

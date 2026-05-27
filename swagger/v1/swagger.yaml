@@ -4,6 +4,349 @@ info:
   title: SGM - Sistema de Gerenciamento para Marmitaria API
   version: v1
 paths:
+  "/api/v1/analytics/abc":
+    get:
+      summary: Shows ABC curve analytics
+      tags:
+      - Analytics
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: start_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      - name: end_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      - name: product_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: category_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: abc analytics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      period:
+                        "$ref": "#/components/schemas/report_period"
+                      total_revenue:
+                        type: string
+                      products:
+                        type: array
+                        items:
+                          "$ref": "#/components/schemas/analytics_product_metric"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: invalid period
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+  "/api/v1/analytics/profitability":
+    get:
+      summary: Shows profitability analytics
+      tags:
+      - Analytics
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: start_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      - name: end_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      - name: product_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: category_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: profitability analytics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      period:
+                        "$ref": "#/components/schemas/report_period"
+                      products:
+                        type: array
+                        items:
+                          "$ref": "#/components/schemas/analytics_product_metric"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: invalid period
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+  "/api/v1/analytics/trends":
+    get:
+      summary: Shows trend analytics
+      tags:
+      - Analytics
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: start_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      - name: end_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      - name: product_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: category_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: granularity
+        in: query
+        enum:
+        - day
+        - week
+        - month
+        required: false
+        schema:
+          type: string
+        description: ":\n * `day` \n * `week` \n * `month` \n "
+      responses:
+        '200':
+          description: trend analytics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      period:
+                        "$ref": "#/components/schemas/report_period"
+                      granularity:
+                        type: string
+                      points:
+                        type: array
+                        items:
+                          type: object
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: invalid period
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+  "/api/v1/analytics/product_performance":
+    get:
+      summary: Shows product performance analytics
+      tags:
+      - Analytics
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: start_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      - name: end_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      - name: product_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: category_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: product performance analytics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      period:
+                        "$ref": "#/components/schemas/report_period"
+                      most_sold_products:
+                        type: array
+                        items:
+                          "$ref": "#/components/schemas/analytics_product_metric"
+                      least_sold_products:
+                        type: array
+                        items:
+                          "$ref": "#/components/schemas/analytics_product_metric"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: invalid period
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+  "/api/v1/analytics/ingredient_consumption":
+    get:
+      summary: Shows ingredient consumption analytics
+      tags:
+      - Analytics
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: start_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      - name: end_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      - name: product_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: category_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: ingredient consumption analytics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      period:
+                        "$ref": "#/components/schemas/report_period"
+                      ingredients:
+                        type: array
+                        items:
+                          "$ref": "#/components/schemas/analytics_ingredient_metric"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: invalid period
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
   "/api/v1/audit_logs":
     get:
       summary: Lists audit logs
@@ -3367,6 +3710,38 @@ components:
           type: string
           format: date
           nullable: true
+    analytics_product_metric:
+      type: object
+      properties:
+        product_id:
+          type: integer
+        code:
+          type: string
+        name:
+          type: string
+        quantity_sold:
+          type: integer
+        revenue:
+          type: string
+        estimated_cost:
+          type: string
+        gross_profit:
+          type: string
+    analytics_ingredient_metric:
+      type: object
+      properties:
+        ingredient_id:
+          type: integer
+        code:
+          type: string
+        name:
+          type: string
+        unit:
+          type: string
+        quantity:
+          type: string
+        estimated_cost:
+          type: string
     menu_item:
       type: object
       properties:
