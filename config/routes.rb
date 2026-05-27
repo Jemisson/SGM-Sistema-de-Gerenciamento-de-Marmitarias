@@ -23,6 +23,12 @@ Rails.application.routes.draw do
       resources :sales, only: %i[index create show] do
         patch :cancel, on: :member
       end
+      namespace :reports do
+        get :overview
+        get :statistics
+        get :stock
+        get :financial
+      end
       resources :stock_movements, only: %i[index create show]
       resources :suppliers
 

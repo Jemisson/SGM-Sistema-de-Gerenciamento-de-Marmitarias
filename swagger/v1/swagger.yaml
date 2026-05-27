@@ -1736,6 +1736,308 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/error_response"
+  "/api/v1/reports/overview":
+    get:
+      summary: Shows overview report
+      tags:
+      - Reports
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: period
+        in: query
+        enum:
+        - today
+        - week
+        - month
+        - year
+        - custom
+        required: false
+        schema:
+          type: string
+        description: ":\n * `today` \n * `week` \n * `month` \n * `year` \n * `custom`
+          \n "
+      - name: start_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      - name: end_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: overview report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      period:
+                        "$ref": "#/components/schemas/report_period"
+                      total_revenue:
+                        type: string
+                      average_ticket:
+                        type: string
+                      gross_profit:
+                        type: string
+                      stock_items_count:
+                        type: integer
+                      top_products:
+                        type: array
+                        items:
+                          "$ref": "#/components/schemas/report_product_summary"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: invalid period
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+  "/api/v1/reports/statistics":
+    get:
+      summary: Shows sales statistics report
+      tags:
+      - Reports
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: period
+        in: query
+        enum:
+        - today
+        - week
+        - month
+        - year
+        - custom
+        required: false
+        schema:
+          type: string
+        description: ":\n * `today` \n * `week` \n * `month` \n * `year` \n * `custom`
+          \n "
+      - name: start_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      - name: end_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: statistics report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      period:
+                        "$ref": "#/components/schemas/report_period"
+                      total_sold:
+                        type: integer
+                      total_revenue:
+                        type: string
+                      average_ticket:
+                        type: string
+                      sales_by_payment_method:
+                        type: object
+                      sales_by_product:
+                        type: array
+                        items:
+                          "$ref": "#/components/schemas/report_product_summary"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: invalid period
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+  "/api/v1/reports/stock":
+    get:
+      summary: Shows stock report
+      tags:
+      - Reports
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: period
+        in: query
+        enum:
+        - today
+        - week
+        - month
+        - year
+        - custom
+        required: false
+        schema:
+          type: string
+        description: ":\n * `today` \n * `week` \n * `month` \n * `year` \n * `custom`
+          \n "
+      - name: start_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      - name: end_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: stock report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      period:
+                        "$ref": "#/components/schemas/report_period"
+                      ingredients_below_minimum_stock:
+                        type: array
+                        items:
+                          "$ref": "#/components/schemas/report_ingredient_summary"
+                      ingredients_near_expiration:
+                        type: array
+                        items:
+                          "$ref": "#/components/schemas/report_ingredient_summary"
+                      total_ingredients:
+                        type: integer
+                      stock_consumption_summary:
+                        type: array
+                        items:
+                          type: object
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: invalid period
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+  "/api/v1/reports/financial":
+    get:
+      summary: Shows financial report
+      tags:
+      - Reports
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: period
+        in: query
+        enum:
+        - today
+        - week
+        - month
+        - year
+        - custom
+        required: false
+        schema:
+          type: string
+        description: ":\n * `today` \n * `week` \n * `month` \n * `year` \n * `custom`
+          \n "
+      - name: start_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      - name: end_date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: financial report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      period:
+                        "$ref": "#/components/schemas/report_period"
+                      incomes:
+                        type: string
+                      expenses:
+                        type: string
+                      balance:
+                        type: string
+                      totals_by_payment_method:
+                        type: object
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: invalid period
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
   "/api/v1/sales":
     get:
       summary: Lists sales
@@ -3024,6 +3326,47 @@ components:
           - occurred_at
       required:
       - financial_entry
+    report_period:
+      type: object
+      properties:
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+    report_product_summary:
+      type: object
+      properties:
+        product_id:
+          type: integer
+        code:
+          type: string
+        name:
+          type: string
+        quantity_sold:
+          type: integer
+        revenue:
+          type: string
+    report_ingredient_summary:
+      type: object
+      properties:
+        id:
+          type: integer
+        code:
+          type: string
+        name:
+          type: string
+        current_stock:
+          type: string
+        minimum_stock:
+          type: string
+        unit:
+          type: string
+        expiration_date:
+          type: string
+          format: date
+          nullable: true
     menu_item:
       type: object
       properties:

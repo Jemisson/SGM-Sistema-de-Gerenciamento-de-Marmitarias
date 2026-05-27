@@ -485,6 +485,35 @@ RSpec.configure do |config|
             },
             required: %w[financial_entry]
           },
+          report_period: {
+            type: :object,
+            properties: {
+              start_date: { type: :string, format: "date-time" },
+              end_date: { type: :string, format: "date-time" }
+            }
+          },
+          report_product_summary: {
+            type: :object,
+            properties: {
+              product_id: { type: :integer },
+              code: { type: :string },
+              name: { type: :string },
+              quantity_sold: { type: :integer },
+              revenue: { type: :string }
+            }
+          },
+          report_ingredient_summary: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              code: { type: :string },
+              name: { type: :string },
+              current_stock: { type: :string },
+              minimum_stock: { type: :string },
+              unit: { type: :string },
+              expiration_date: { type: :string, format: "date", nullable: true }
+            }
+          },
           menu_item: {
             type: :object,
             properties: {
