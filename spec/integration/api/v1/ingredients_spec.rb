@@ -6,7 +6,6 @@ RSpec.describe "API V1 Ingredients", type: :request do
       tags "Ingredients"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
       parameter name: :name, in: :query, type: :string, required: false
       parameter name: :code, in: :query, type: :string, required: false
       parameter name: :category_id, in: :query, type: :integer, required: false
@@ -74,7 +73,6 @@ RSpec.describe "API V1 Ingredients", type: :request do
       consumes "application/json"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
       parameter name: :ingredient_payload, in: :body, schema: { "$ref" => "#/components/schemas/ingredient_payload" }
 
       response "201", "ingredient created" do
@@ -143,7 +141,6 @@ RSpec.describe "API V1 Ingredients", type: :request do
       tags "Ingredients"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
 
       response "200", "ingredient found" do
         let(:user) { create(:user, :admin) }
@@ -193,7 +190,6 @@ RSpec.describe "API V1 Ingredients", type: :request do
       consumes "application/json"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
       parameter name: :ingredient_payload, in: :body, schema: { "$ref" => "#/components/schemas/ingredient_payload" }
 
       response "200", "ingredient updated" do
@@ -258,7 +254,6 @@ RSpec.describe "API V1 Ingredients", type: :request do
       tags "Ingredients"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
 
       response "200", "ingredient disabled" do
         let(:user) { create(:user, :admin) }

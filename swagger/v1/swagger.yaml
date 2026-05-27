@@ -12,10 +12,6 @@ paths:
       security:
       - bearerAuth: []
       parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
       - name: user_id
         in: query
         required: false
@@ -204,11 +200,6 @@ paths:
       - Authentication
       security:
       - bearerAuth: []
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
       responses:
         '200':
           description: logged out
@@ -235,11 +226,6 @@ paths:
       - Authentication
       security:
       - bearerAuth: []
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
       responses:
         '200':
           description: authenticated user
@@ -267,10 +253,26 @@ paths:
       security:
       - bearerAuth: []
       parameters:
-      - name: Authorization
-        in: header
+      - name: name
+        in: query
+        required: false
         schema:
           type: string
+      - name: active
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           description: categories listed
@@ -283,6 +285,8 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/category"
+                  meta:
+                    "$ref": "#/components/schemas/pagination_meta"
         '401':
           description: missing or invalid token
           content:
@@ -295,11 +299,7 @@ paths:
       - Categories
       security:
       - bearerAuth: []
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
+      parameters: []
       responses:
         '201':
           description: category created
@@ -346,11 +346,6 @@ paths:
       - Categories
       security:
       - bearerAuth: []
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
       responses:
         '200':
           description: category found
@@ -379,11 +374,7 @@ paths:
       - Categories
       security:
       - bearerAuth: []
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
+      parameters: []
       responses:
         '200':
           description: category updated
@@ -429,11 +420,6 @@ paths:
       - Categories
       security:
       - bearerAuth: []
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
       responses:
         '200':
           description: category disabled
@@ -470,10 +456,6 @@ paths:
       security:
       - bearerAuth: []
       parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
       - name: name
         in: query
         required: false
@@ -534,11 +516,7 @@ paths:
       - Ingredients
       security:
       - bearerAuth: []
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
+      parameters: []
       responses:
         '201':
           description: ingredient created
@@ -585,11 +563,6 @@ paths:
       - Ingredients
       security:
       - bearerAuth: []
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
       responses:
         '200':
           description: ingredient found
@@ -624,11 +597,7 @@ paths:
       - Ingredients
       security:
       - bearerAuth: []
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
+      parameters: []
       responses:
         '200':
           description: ingredient updated
@@ -674,11 +643,6 @@ paths:
       - Ingredients
       security:
       - bearerAuth: []
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
       responses:
         '200':
           description: ingredient disabled
@@ -715,10 +679,6 @@ paths:
       security:
       - bearerAuth: []
       parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
       - name: name
         in: query
         required: false
@@ -764,11 +724,7 @@ paths:
       - Suppliers
       security:
       - bearerAuth: []
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
+      parameters: []
       responses:
         '201':
           description: supplier created
@@ -815,11 +771,6 @@ paths:
       - Suppliers
       security:
       - bearerAuth: []
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
       responses:
         '200':
           description: supplier found
@@ -854,11 +805,7 @@ paths:
       - Suppliers
       security:
       - bearerAuth: []
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
+      parameters: []
       responses:
         '200':
           description: supplier updated
@@ -904,11 +851,6 @@ paths:
       - Suppliers
       security:
       - bearerAuth: []
-      parameters:
-      - name: Authorization
-        in: header
-        schema:
-          type: string
       responses:
         '200':
           description: supplier disabled

@@ -7,7 +7,6 @@ RSpec.describe "API V1 Audit Logs", type: :request do
       produces "application/json"
       security [bearerAuth: []]
 
-      parameter name: :Authorization, in: :header, type: :string
       parameter name: :user_id, in: :query, type: :integer, required: false
       parameter name: :action, in: :query, type: :string, required: false
       parameter name: :start_date, in: :query, type: :string, required: false, example: "2026-05-01T00:00:00Z"

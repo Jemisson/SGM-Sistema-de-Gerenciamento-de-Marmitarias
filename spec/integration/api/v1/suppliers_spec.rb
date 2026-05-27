@@ -6,7 +6,6 @@ RSpec.describe "API V1 Suppliers", type: :request do
       tags "Suppliers"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
       parameter name: :name, in: :query, type: :string, required: false
       parameter name: :cnpj, in: :query, type: :string, required: false
       parameter name: :active, in: :query, type: :boolean, required: false
@@ -62,7 +61,6 @@ RSpec.describe "API V1 Suppliers", type: :request do
       consumes "application/json"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
       parameter name: :supplier_payload, in: :body, schema: { "$ref" => "#/components/schemas/supplier_payload" }
 
       response "201", "supplier created" do
@@ -125,7 +123,6 @@ RSpec.describe "API V1 Suppliers", type: :request do
       tags "Suppliers"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
 
       response "200", "supplier found" do
         let(:user) { create(:user, :admin) }
@@ -175,7 +172,6 @@ RSpec.describe "API V1 Suppliers", type: :request do
       consumes "application/json"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
       parameter name: :supplier_payload, in: :body, schema: { "$ref" => "#/components/schemas/supplier_payload" }
 
       response "200", "supplier updated" do
@@ -240,7 +236,6 @@ RSpec.describe "API V1 Suppliers", type: :request do
       tags "Suppliers"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
 
       response "200", "supplier disabled" do
         let(:user) { create(:user, :admin) }

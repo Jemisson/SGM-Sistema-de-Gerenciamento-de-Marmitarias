@@ -70,7 +70,6 @@ RSpec.describe "API V1 Authentication", type: :request do
       tags "Authentication"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
 
       response "200", "logged out" do
         let(:user) { create(:user) }
@@ -104,7 +103,6 @@ RSpec.describe "API V1 Authentication", type: :request do
       tags "Authentication"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
 
       response "200", "authenticated user" do
         let(:user) { create(:user) }

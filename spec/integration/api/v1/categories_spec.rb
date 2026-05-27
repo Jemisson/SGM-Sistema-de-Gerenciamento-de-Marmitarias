@@ -6,11 +6,18 @@ RSpec.describe "API V1 Categories", type: :request do
       tags "Categories"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
+      parameter name: :name, in: :query, type: :string, required: false
+      parameter name: :active, in: :query, type: :boolean, required: false
+      parameter name: :page, in: :query, type: :integer, required: false
+      parameter name: :per_page, in: :query, type: :integer, required: false
 
       response "200", "categories listed" do
         let(:user) { create(:user, :cashier) }
         let(:Authorization) { authorization_header_for(user) }
+        let(:name) { nil }
+        let(:active) { nil }
+        let(:page) { nil }
+        let(:per_page) { nil }
 
         before do
           create(:category, name: "Bebidas")
@@ -21,7 +28,8 @@ RSpec.describe "API V1 Categories", type: :request do
                  data: {
                    type: :array,
                    items: { "$ref" => "#/components/schemas/category" }
-                 }
+                 },
+                 meta: { "$ref" => "#/components/schemas/pagination_meta" }
                }
 
         run_test!
@@ -29,6 +37,10 @@ RSpec.describe "API V1 Categories", type: :request do
 
       response "401", "missing or invalid token" do
         let(:Authorization) { "Bearer invalid-token" }
+        let(:name) { nil }
+        let(:active) { nil }
+        let(:page) { nil }
+        let(:per_page) { nil }
 
         schema "$ref" => "#/components/schemas/error_response"
 
@@ -41,7 +53,6 @@ RSpec.describe "API V1 Categories", type: :request do
       consumes "application/json"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
       parameter name: :category_payload, in: :body, schema: { "$ref" => "#/components/schemas/category_payload" }
 
       response "201", "category created" do
@@ -102,7 +113,6 @@ RSpec.describe "API V1 Categories", type: :request do
       tags "Categories"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
 
       response "200", "category found" do
         let(:user) { create(:user, :cashier) }
@@ -142,7 +152,6 @@ RSpec.describe "API V1 Categories", type: :request do
       consumes "application/json"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
       parameter name: :category_payload, in: :body, schema: { "$ref" => "#/components/schemas/category_payload" }
 
       response "200", "category updated" do
@@ -207,7 +216,6 @@ RSpec.describe "API V1 Categories", type: :request do
       tags "Categories"
       produces "application/json"
       security [bearerAuth: []]
-      parameter name: :Authorization, in: :header, type: :string
 
       response "200", "category disabled" do
         let(:user) { create(:user, :admin) }

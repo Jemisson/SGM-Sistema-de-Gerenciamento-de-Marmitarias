@@ -11,6 +11,56 @@ RSpec.describe "Api::V1::Categories", type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.parsed_body.fetch("data").pluck("id")).to eq([active_category.id])
+      expect(response.parsed_body.fetch("meta")).to include(
+        "page" => 1,
+        "per_page" => 20,
+        "total_count" => 1,
+        "total_pages" => 1
+      )
+    end
+
+    it "filters by name and active" do
+      cashier = create(:user, :cashier)
+      included_category = create(:category, :inactive, name: "Bebidas Frias")
+      create(:category, :inactive, name: "Sobremesas")
+      create(:category, name: "Bebidas Quentes")
+
+      get "/api/v1/categories",
+          params: {
+            name: "Bebidas",
+            active: false
+          },
+          headers: authorization_header_for(cashier)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body.fetch("data").pluck("id")).to eq([included_category.id])
+      expect(response.parsed_body.fetch("meta")).to include(
+        "total_count" => 1,
+        "total_pages" => 1
+      )
+    end
+
+    it "paginates categories" do
+      cashier = create(:user, :cashier)
+      create(:category, name: "Bebidas")
+      create(:category, name: "Marmitas")
+      create(:category, name: "Sobremesas")
+
+      get "/api/v1/categories",
+          params: {
+            page: 2,
+            per_page: 2
+          },
+          headers: authorization_header_for(cashier)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body.fetch("data").size).to eq(1)
+      expect(response.parsed_body.fetch("meta")).to include(
+        "page" => 2,
+        "per_page" => 2,
+        "total_count" => 3,
+        "total_pages" => 2
+      )
     end
 
     it "requires authentication" do
