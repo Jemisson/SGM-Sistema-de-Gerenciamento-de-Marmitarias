@@ -19,6 +19,9 @@ Rails.application.routes.draw do
       end
       resources :products
       resources :recipes
+      resources :sales, only: %i[index create show] do
+        patch :cancel, on: :member
+      end
       resources :stock_movements, only: %i[index create show]
       resources :suppliers
 

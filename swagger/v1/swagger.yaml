@@ -1511,6 +1511,159 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/error_response"
+  "/api/v1/sales":
+    get:
+      summary: Lists sales
+      tags:
+      - Sales
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: sales listed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/sale"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+    post:
+      summary: Creates a sale
+      tags:
+      - Sales
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: sale created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/sale"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/sale_payload"
+  "/api/v1/sales/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Shows a sale
+      tags:
+      - Sales
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: sale found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/sale"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: sale not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+  "/api/v1/sales/{id}/cancel":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    patch:
+      summary: Cancels a sale
+      tags:
+      - Sales
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: sale canceled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/sale"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: sale not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: already canceled
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
   "/api/v1/stock_movements":
     get:
       summary: Lists stock movements
@@ -2452,6 +2605,103 @@ components:
           - recipe_items_attributes
       required:
       - recipe
+    sale_item:
+      type: object
+      properties:
+        id:
+          type: integer
+        product:
+          type: object
+          properties:
+            id:
+              type: integer
+            code:
+              type: string
+              nullable: true
+            name:
+              type: string
+              nullable: true
+        quantity:
+          type: integer
+        unit_price:
+          type: string
+        total_price:
+          type: string
+    sale:
+      type: object
+      properties:
+        id:
+          type: integer
+        cash_session_id:
+          type: integer
+        user:
+          "$ref": "#/components/schemas/user"
+        total_amount:
+          type: string
+        payment_method:
+          type: string
+          enum:
+          - cash
+          - credit_card
+          - debit_card
+          - pix
+        status:
+          type: string
+          enum:
+          - confirmed
+          - canceled
+        sold_at:
+          type: string
+          format: date-time
+        sale_items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/sale_item"
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+    sale_payload:
+      type: object
+      properties:
+        sale:
+          type: object
+          properties:
+            cash_session_id:
+              type: integer
+            payment_method:
+              type: string
+              enum:
+              - cash
+              - credit_card
+              - debit_card
+              - pix
+              example: pix
+            sold_at:
+              type: string
+              format: date-time
+            sale_items_attributes:
+              type: array
+              items:
+                type: object
+                properties:
+                  product_id:
+                    type: integer
+                  quantity:
+                    type: integer
+                    example: 2
+                required:
+                - product_id
+                - quantity
+          required:
+          - payment_method
+          - sale_items_attributes
+      required:
+      - sale
     menu_item:
       type: object
       properties:

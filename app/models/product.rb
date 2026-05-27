@@ -2,6 +2,7 @@ class Product < ApplicationRecord
   belongs_to :category
   has_one :recipe, dependent: :restrict_with_exception
   has_many :menu_items, dependent: :restrict_with_exception
+  has_many :sale_items, dependent: :restrict_with_exception
 
   has_one_attached :image
 

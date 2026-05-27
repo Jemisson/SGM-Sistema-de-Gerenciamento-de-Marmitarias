@@ -2,6 +2,7 @@ class CashSession < ApplicationRecord
   belongs_to :opened_by, class_name: "User", inverse_of: :opened_cash_sessions
   belongs_to :closed_by, class_name: "User", inverse_of: :closed_cash_sessions, optional: true
   has_many :cash_movements, dependent: :restrict_with_exception
+  has_many :sales, dependent: :restrict_with_exception
 
   enum :status, {
     opened: 0,

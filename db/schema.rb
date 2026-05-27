@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_053448) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_210403) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -199,6 +199,34 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_053448) do
     t.index ["product_id"], name: "index_recipes_on_product_id"
   end
 
+  create_table "sale_items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "product_id", null: false
+    t.integer "quantity", null: false
+    t.bigint "sale_id", null: false
+    t.decimal "total_price", precision: 10, scale: 2, null: false
+    t.decimal "unit_price", precision: 10, scale: 2, null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_sale_items_on_product_id"
+    t.index ["sale_id"], name: "index_sale_items_on_sale_id"
+  end
+
+  create_table "sales", force: :cascade do |t|
+    t.bigint "cash_session_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "payment_method", null: false
+    t.datetime "sold_at", null: false
+    t.integer "status", default: 0, null: false
+    t.decimal "total_amount", precision: 10, scale: 2, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["cash_session_id"], name: "index_sales_on_cash_session_id"
+    t.index ["payment_method"], name: "index_sales_on_payment_method"
+    t.index ["sold_at"], name: "index_sales_on_sold_at"
+    t.index ["status"], name: "index_sales_on_status"
+    t.index ["user_id"], name: "index_sales_on_user_id"
+  end
+
   create_table "stock_movements", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "ingredient_id", null: false
@@ -280,6 +308,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_053448) do
   add_foreign_key "recipe_items", "ingredients"
   add_foreign_key "recipe_items", "recipes"
   add_foreign_key "recipes", "products"
+  add_foreign_key "sale_items", "products"
+  add_foreign_key "sale_items", "sales"
+  add_foreign_key "sales", "cash_sessions"
+  add_foreign_key "sales", "users"
   add_foreign_key "stock_movements", "ingredients"
   add_foreign_key "stock_movements", "users"
 end

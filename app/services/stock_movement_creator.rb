@@ -39,18 +39,23 @@ class StockMovementCreator
   attr_reader :user, :ingredient, :movement_type, :quantity, :unit_cost, :reason, :source, :source_type, :source_id, :occurred_at
 
   def build_movement
-    StockMovement.new(
+    attributes = {
       user: user,
       ingredient: ingredient,
       movement_type: movement_type,
       quantity: quantity,
       unit_cost: unit_cost,
       reason: reason,
-      source: source,
-      source_type: source_type,
-      source_id: source_id,
       occurred_at: occurred_at
-    )
+    }
+    if source
+      attributes[:source] = source
+    else
+      attributes[:source_type] = source_type
+      attributes[:source_id] = source_id
+    end
+
+    StockMovement.new(attributes)
   end
 
   def calculate_new_stock(movement)

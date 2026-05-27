@@ -17,9 +17,9 @@ RSpec.describe "Module policies" do
     expect(ManagementPolicy.new(cashier, :management).manage?).to be(false)
   end
 
-  it "allows only cashiers to register sales" do
+  it "allows managers and cashiers to register sales" do
     expect(SalePolicy.new(admin, :sale).create?).to be(false)
-    expect(SalePolicy.new(manager, :sale).create?).to be(false)
+    expect(SalePolicy.new(manager, :sale).create?).to be(true)
     expect(SalePolicy.new(cashier, :sale).create?).to be(true)
   end
 

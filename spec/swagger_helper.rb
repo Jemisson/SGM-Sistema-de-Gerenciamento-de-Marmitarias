@@ -381,6 +381,67 @@ RSpec.configure do |config|
             },
             required: %w[recipe]
           },
+          sale_item: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              product: {
+                type: :object,
+                properties: {
+                  id: { type: :integer },
+                  code: { type: :string, nullable: true },
+                  name: { type: :string, nullable: true }
+                }
+              },
+              quantity: { type: :integer },
+              unit_price: { type: :string },
+              total_price: { type: :string }
+            }
+          },
+          sale: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              cash_session_id: { type: :integer },
+              user: { "$ref" => "#/components/schemas/user" },
+              total_amount: { type: :string },
+              payment_method: { type: :string, enum: %w[cash credit_card debit_card pix] },
+              status: { type: :string, enum: %w[confirmed canceled] },
+              sold_at: { type: :string, format: "date-time" },
+              sale_items: {
+                type: :array,
+                items: { "$ref" => "#/components/schemas/sale_item" }
+              },
+              created_at: { type: :string, format: "date-time", nullable: true },
+              updated_at: { type: :string, format: "date-time", nullable: true }
+            }
+          },
+          sale_payload: {
+            type: :object,
+            properties: {
+              sale: {
+                type: :object,
+                properties: {
+                  cash_session_id: { type: :integer },
+                  payment_method: { type: :string, enum: %w[cash credit_card debit_card pix], example: "pix" },
+                  sold_at: { type: :string, format: "date-time" },
+                  sale_items_attributes: {
+                    type: :array,
+                    items: {
+                      type: :object,
+                      properties: {
+                        product_id: { type: :integer },
+                        quantity: { type: :integer, example: 2 }
+                      },
+                      required: %w[product_id quantity]
+                    }
+                  }
+                },
+                required: %w[payment_method sale_items_attributes]
+              }
+            },
+            required: %w[sale]
+          },
           menu_item: {
             type: :object,
             properties: {

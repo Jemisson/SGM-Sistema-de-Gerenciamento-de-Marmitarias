@@ -1,5 +1,17 @@
 class SalePolicy < ApplicationPolicy
+  def index?
+    manage_cash_register?
+  end
+
+  def show?
+    manage_cash_register?
+  end
+
   def create?
-    register_sales?
+    manage_cash_register?
+  end
+
+  def cancel?
+    manage_cash_register?
   end
 end
