@@ -462,6 +462,236 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/error_response"
+  "/api/v1/suppliers":
+    get:
+      summary: Lists suppliers
+      tags:
+      - Suppliers
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: cnpj
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: active
+        in: query
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: suppliers listed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/supplier"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+    post:
+      summary: Creates a supplier
+      tags:
+      - Suppliers
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      responses:
+        '201':
+          description: supplier created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/supplier"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/supplier_payload"
+  "/api/v1/suppliers/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Shows a supplier
+      tags:
+      - Suppliers
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: supplier found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/supplier"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: supplier not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+    patch:
+      summary: Updates a supplier
+      tags:
+      - Suppliers
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: supplier updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/supplier"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: supplier not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/supplier_payload"
+    delete:
+      summary: Soft deletes a supplier
+      tags:
+      - Suppliers
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: supplier disabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/supplier"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: supplier not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
 components:
   securitySchemes:
     bearerAuth:
@@ -571,6 +801,93 @@ components:
           - name
       required:
       - category
+    supplier:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        cnpj:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        street:
+          type: string
+          nullable: true
+        number:
+          type: string
+          nullable: true
+        neighborhood:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+        zip_code:
+          type: string
+          nullable: true
+        active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+    supplier_payload:
+      type: object
+      properties:
+        supplier:
+          type: object
+          properties:
+            name:
+              type: string
+              example: Fornecedor Central
+            cnpj:
+              type: string
+              example: '12345678000199'
+            phone:
+              type: string
+              example: '44999999999'
+            email:
+              type: string
+              example: central@sgm.test
+            street:
+              type: string
+              example: Avenida Colombo
+            number:
+              type: string
+              example: '5790'
+            neighborhood:
+              type: string
+              example: Zona 7
+            city:
+              type: string
+              example: Maringa
+            state:
+              type: string
+              example: PR
+            zip_code:
+              type: string
+              example: '87020900'
+            active:
+              type: boolean
+              example: true
+          required:
+          - name
+          - cnpj
+      required:
+      - supplier
     pagination_meta:
       type: object
       properties:

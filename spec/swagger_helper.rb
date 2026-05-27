@@ -107,6 +107,48 @@ RSpec.configure do |config|
             },
             required: %w[category]
           },
+          supplier: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              name: { type: :string },
+              cnpj: { type: :string },
+              phone: { type: :string, nullable: true },
+              email: { type: :string, nullable: true },
+              street: { type: :string, nullable: true },
+              number: { type: :string, nullable: true },
+              neighborhood: { type: :string, nullable: true },
+              city: { type: :string, nullable: true },
+              state: { type: :string, nullable: true },
+              zip_code: { type: :string, nullable: true },
+              active: { type: :boolean },
+              created_at: { type: :string, format: "date-time", nullable: true },
+              updated_at: { type: :string, format: "date-time", nullable: true }
+            }
+          },
+          supplier_payload: {
+            type: :object,
+            properties: {
+              supplier: {
+                type: :object,
+                properties: {
+                  name: { type: :string, example: "Fornecedor Central" },
+                  cnpj: { type: :string, example: "12345678000199" },
+                  phone: { type: :string, example: "44999999999" },
+                  email: { type: :string, example: "central@sgm.test" },
+                  street: { type: :string, example: "Avenida Colombo" },
+                  number: { type: :string, example: "5790" },
+                  neighborhood: { type: :string, example: "Zona 7" },
+                  city: { type: :string, example: "Maringa" },
+                  state: { type: :string, example: "PR" },
+                  zip_code: { type: :string, example: "87020900" },
+                  active: { type: :boolean, example: true }
+                },
+                required: %w[name cnpj]
+              }
+            },
+            required: %w[supplier]
+          },
           pagination_meta: {
             type: :object,
             properties: {

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_043209) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_043847) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,6 +39,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_043209) do
     t.datetime "updated_at", null: false
     t.index ["active"], name: "index_categories_on_active"
     t.index ["name"], name: "index_categories_on_name", unique: true
+  end
+
+  create_table "suppliers", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.string "city"
+    t.string "cnpj", null: false
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.string "name", null: false
+    t.string "neighborhood"
+    t.string "number"
+    t.string "phone"
+    t.string "state"
+    t.string "street"
+    t.datetime "updated_at", null: false
+    t.string "zip_code"
+    t.index ["active"], name: "index_suppliers_on_active"
+    t.index ["cnpj"], name: "index_suppliers_on_cnpj", unique: true
+    t.index ["name"], name: "index_suppliers_on_name"
   end
 
   create_table "users", force: :cascade do |t|
