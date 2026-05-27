@@ -462,6 +462,251 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/error_response"
+  "/api/v1/ingredients":
+    get:
+      summary: Lists ingredients
+      tags:
+      - Ingredients
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: code
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: category_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: supplier_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: active
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: below_minimum_stock
+        in: query
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: ingredients listed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ingredient"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+    post:
+      summary: Creates an ingredient
+      tags:
+      - Ingredients
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      responses:
+        '201':
+          description: ingredient created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/ingredient"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ingredient_payload"
+  "/api/v1/ingredients/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Shows an ingredient
+      tags:
+      - Ingredients
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ingredient found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/ingredient"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: ingredient not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+    patch:
+      summary: Updates an ingredient
+      tags:
+      - Ingredients
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ingredient updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/ingredient"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: ingredient not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ingredient_payload"
+    delete:
+      summary: Soft deletes an ingredient
+      tags:
+      - Ingredients
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ingredient disabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/ingredient"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: ingredient not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
   "/api/v1/suppliers":
     get:
       summary: Lists suppliers
@@ -888,6 +1133,116 @@ components:
           - cnpj
       required:
       - supplier
+    ingredient:
+      type: object
+      properties:
+        id:
+          type: integer
+        code:
+          type: string
+        name:
+          type: string
+        category:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+              nullable: true
+        supplier:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+              nullable: true
+        unit:
+          type: string
+        current_stock:
+          type: string
+        minimum_stock:
+          type: string
+        purchase_price:
+          type: string
+          nullable: true
+        manufacturing_date:
+          type: string
+          format: date
+          nullable: true
+        expiration_date:
+          type: string
+          format: date
+          nullable: true
+        received_at:
+          type: string
+          format: date
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+    ingredient_payload:
+      type: object
+      properties:
+        ingredient:
+          type: object
+          properties:
+            code:
+              type: string
+              example: INS001
+            name:
+              type: string
+              example: Arroz
+            category_id:
+              type: integer
+            supplier_id:
+              type: integer
+            unit:
+              type: string
+              example: kg
+            current_stock:
+              type: string
+              example: '10.500'
+            minimum_stock:
+              type: string
+              example: '2.000'
+            purchase_price:
+              type: string
+              example: '15.90'
+            manufacturing_date:
+              type: string
+              format: date
+            expiration_date:
+              type: string
+              format: date
+            received_at:
+              type: string
+              format: date
+            notes:
+              type: string
+              example: Insumo usado na produção
+            active:
+              type: boolean
+              example: true
+          required:
+          - code
+          - name
+          - category_id
+          - supplier_id
+          - unit
+      required:
+      - ingredient
     pagination_meta:
       type: object
       properties:

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_043847) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_044707) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,6 +39,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_043847) do
     t.datetime "updated_at", null: false
     t.index ["active"], name: "index_categories_on_active"
     t.index ["name"], name: "index_categories_on_name", unique: true
+  end
+
+  create_table "ingredients", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.bigint "category_id", null: false
+    t.string "code", null: false
+    t.datetime "created_at", null: false
+    t.decimal "current_stock", precision: 12, scale: 3, default: "0.0", null: false
+    t.date "expiration_date"
+    t.date "manufacturing_date"
+    t.decimal "minimum_stock", precision: 12, scale: 3, default: "0.0", null: false
+    t.string "name", null: false
+    t.text "notes"
+    t.decimal "purchase_price", precision: 10, scale: 2
+    t.date "received_at"
+    t.bigint "supplier_id", null: false
+    t.string "unit", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_ingredients_on_active"
+    t.index ["category_id", "active"], name: "index_ingredients_on_category_id_and_active"
+    t.index ["category_id"], name: "index_ingredients_on_category_id"
+    t.index ["code"], name: "index_ingredients_on_code", unique: true
+    t.index ["name"], name: "index_ingredients_on_name"
+    t.index ["supplier_id", "active"], name: "index_ingredients_on_supplier_id_and_active"
+    t.index ["supplier_id"], name: "index_ingredients_on_supplier_id"
   end
 
   create_table "suppliers", force: :cascade do |t|
@@ -89,4 +114,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_043847) do
   end
 
   add_foreign_key "audit_logs", "users"
+  add_foreign_key "ingredients", "categories"
+  add_foreign_key "ingredients", "suppliers"
 end

@@ -149,6 +149,64 @@ RSpec.configure do |config|
             },
             required: %w[supplier]
           },
+          ingredient: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              code: { type: :string },
+              name: { type: :string },
+              category: {
+                type: :object,
+                properties: {
+                  id: { type: :integer },
+                  name: { type: :string, nullable: true }
+                }
+              },
+              supplier: {
+                type: :object,
+                properties: {
+                  id: { type: :integer },
+                  name: { type: :string, nullable: true }
+                }
+              },
+              unit: { type: :string },
+              current_stock: { type: :string },
+              minimum_stock: { type: :string },
+              purchase_price: { type: :string, nullable: true },
+              manufacturing_date: { type: :string, format: "date", nullable: true },
+              expiration_date: { type: :string, format: "date", nullable: true },
+              received_at: { type: :string, format: "date", nullable: true },
+              notes: { type: :string, nullable: true },
+              active: { type: :boolean },
+              created_at: { type: :string, format: "date-time", nullable: true },
+              updated_at: { type: :string, format: "date-time", nullable: true }
+            }
+          },
+          ingredient_payload: {
+            type: :object,
+            properties: {
+              ingredient: {
+                type: :object,
+                properties: {
+                  code: { type: :string, example: "INS001" },
+                  name: { type: :string, example: "Arroz" },
+                  category_id: { type: :integer },
+                  supplier_id: { type: :integer },
+                  unit: { type: :string, example: "kg" },
+                  current_stock: { type: :string, example: "10.500" },
+                  minimum_stock: { type: :string, example: "2.000" },
+                  purchase_price: { type: :string, example: "15.90" },
+                  manufacturing_date: { type: :string, format: "date" },
+                  expiration_date: { type: :string, format: "date" },
+                  received_at: { type: :string, format: "date" },
+                  notes: { type: :string, example: "Insumo usado na produção" },
+                  active: { type: :boolean, example: true }
+                },
+                required: %w[code name category_id supplier_id unit]
+              }
+            },
+            required: %w[ingredient]
+          },
           pagination_meta: {
             type: :object,
             properties: {
