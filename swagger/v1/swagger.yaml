@@ -245,6 +245,195 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/error_response"
+  "/api/v1/cash_sessions":
+    get:
+      summary: Lists cash sessions
+      tags:
+      - Cash Sessions
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: cash sessions listed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/cash_session"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+  "/api/v1/cash_sessions/open":
+    post:
+      summary: Opens a cash session
+      tags:
+      - Cash Sessions
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: cash session opened
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/cash_session"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/cash_session_open_payload"
+  "/api/v1/cash_sessions/current":
+    get:
+      summary: Shows current opened cash session
+      tags:
+      - Cash Sessions
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: current cash session found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/cash_session"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: current cash session not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+  "/api/v1/cash_sessions/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Shows a cash session
+      tags:
+      - Cash Sessions
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: cash session found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/cash_session"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: cash session not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+  "/api/v1/cash_sessions/{id}/close":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    patch:
+      summary: Closes a cash session
+      tags:
+      - Cash Sessions
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: cash session closed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/cash_session"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: cash session not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/cash_session_close_payload"
   "/api/v1/categories":
     get:
       summary: Lists active categories
@@ -1743,6 +1932,122 @@ components:
         occurred_at:
           type: string
           format: date-time
+    cash_movement:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          "$ref": "#/components/schemas/user"
+        movement_type:
+          type: string
+          enum:
+          - opening
+          - sale
+          - income
+          - expense
+          - adjustment
+          - closing
+        amount:
+          type: string
+        description:
+          type: string
+          nullable: true
+        source_type:
+          type: string
+          nullable: true
+        source_id:
+          type: integer
+          nullable: true
+        occurred_at:
+          type: string
+          format: date-time
+    cash_session:
+      type: object
+      properties:
+        id:
+          type: integer
+        opened_by:
+          "$ref": "#/components/schemas/user"
+        closed_by:
+          "$ref": "#/components/schemas/user"
+          nullable: true
+        opening_amount:
+          type: string
+        closing_amount:
+          type: string
+          nullable: true
+        expected_amount:
+          type: string
+          nullable: true
+        difference_amount:
+          type: string
+          nullable: true
+        opened_at:
+          type: string
+          format: date-time
+        closed_at:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+          enum:
+          - opened
+          - closed
+        notes:
+          type: string
+          nullable: true
+        cash_movements:
+          type: array
+          items:
+            "$ref": "#/components/schemas/cash_movement"
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+    cash_session_open_payload:
+      type: object
+      properties:
+        cash_session:
+          type: object
+          properties:
+            opening_amount:
+              type: string
+              example: '100.00'
+            opened_at:
+              type: string
+              format: date-time
+            notes:
+              type: string
+              example: Inicio do turno
+          required:
+          - opening_amount
+      required:
+      - cash_session
+    cash_session_close_payload:
+      type: object
+      properties:
+        cash_session:
+          type: object
+          properties:
+            closing_amount:
+              type: string
+              example: '125.00'
+            closed_at:
+              type: string
+              format: date-time
+            notes:
+              type: string
+              example: Fechamento sem divergencias
+          required:
+          - closing_amount
+      required:
+      - cash_session
     category:
       type: object
       properties:

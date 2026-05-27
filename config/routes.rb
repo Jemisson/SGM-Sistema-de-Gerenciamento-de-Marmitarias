@@ -7,6 +7,11 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :audit_logs, only: :index
+      resources :cash_sessions, only: %i[index show] do
+        post :open, on: :collection
+        get :current, on: :collection
+        patch :close, on: :member
+      end
       resources :categories
       resources :ingredients
       resources :menus do

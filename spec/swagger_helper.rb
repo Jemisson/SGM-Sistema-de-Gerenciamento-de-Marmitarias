@@ -81,6 +81,71 @@ RSpec.configure do |config|
               occurred_at: { type: :string, format: "date-time" }
             }
           },
+          cash_movement: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              user: { "$ref" => "#/components/schemas/user" },
+              movement_type: { type: :string, enum: %w[opening sale income expense adjustment closing] },
+              amount: { type: :string },
+              description: { type: :string, nullable: true },
+              source_type: { type: :string, nullable: true },
+              source_id: { type: :integer, nullable: true },
+              occurred_at: { type: :string, format: "date-time" }
+            }
+          },
+          cash_session: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              opened_by: { "$ref" => "#/components/schemas/user" },
+              closed_by: { "$ref" => "#/components/schemas/user", nullable: true },
+              opening_amount: { type: :string },
+              closing_amount: { type: :string, nullable: true },
+              expected_amount: { type: :string, nullable: true },
+              difference_amount: { type: :string, nullable: true },
+              opened_at: { type: :string, format: "date-time" },
+              closed_at: { type: :string, format: "date-time", nullable: true },
+              status: { type: :string, enum: %w[opened closed] },
+              notes: { type: :string, nullable: true },
+              cash_movements: {
+                type: :array,
+                items: { "$ref" => "#/components/schemas/cash_movement" }
+              },
+              created_at: { type: :string, format: "date-time", nullable: true },
+              updated_at: { type: :string, format: "date-time", nullable: true }
+            }
+          },
+          cash_session_open_payload: {
+            type: :object,
+            properties: {
+              cash_session: {
+                type: :object,
+                properties: {
+                  opening_amount: { type: :string, example: "100.00" },
+                  opened_at: { type: :string, format: "date-time" },
+                  notes: { type: :string, example: "Inicio do turno" }
+                },
+                required: %w[opening_amount]
+              }
+            },
+            required: %w[cash_session]
+          },
+          cash_session_close_payload: {
+            type: :object,
+            properties: {
+              cash_session: {
+                type: :object,
+                properties: {
+                  closing_amount: { type: :string, example: "125.00" },
+                  closed_at: { type: :string, format: "date-time" },
+                  notes: { type: :string, example: "Fechamento sem divergencias" }
+                },
+                required: %w[closing_amount]
+              }
+            },
+            required: %w[cash_session]
+          },
           category: {
             type: :object,
             properties: {

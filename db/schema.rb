@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_052750) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_053448) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -57,6 +57,45 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_052750) do
     t.index ["auditable_type", "auditable_id"], name: "index_audit_logs_on_auditable_type_and_auditable_id"
     t.index ["occurred_at"], name: "index_audit_logs_on_occurred_at"
     t.index ["user_id"], name: "index_audit_logs_on_user_id"
+  end
+
+  create_table "cash_movements", force: :cascade do |t|
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.bigint "cash_session_id", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.integer "movement_type", null: false
+    t.datetime "occurred_at", null: false
+    t.bigint "source_id"
+    t.string "source_type"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["cash_session_id"], name: "index_cash_movements_on_cash_session_id"
+    t.index ["movement_type"], name: "index_cash_movements_on_movement_type"
+    t.index ["occurred_at"], name: "index_cash_movements_on_occurred_at"
+    t.index ["source_type", "source_id"], name: "index_cash_movements_on_source_type_and_source_id"
+    t.index ["user_id"], name: "index_cash_movements_on_user_id"
+  end
+
+  create_table "cash_sessions", force: :cascade do |t|
+    t.datetime "closed_at"
+    t.bigint "closed_by_id"
+    t.decimal "closing_amount", precision: 10, scale: 2
+    t.datetime "created_at", null: false
+    t.decimal "difference_amount", precision: 10, scale: 2
+    t.decimal "expected_amount", precision: 10, scale: 2
+    t.text "notes"
+    t.datetime "opened_at", null: false
+    t.bigint "opened_by_id", null: false
+    t.decimal "opening_amount", precision: 10, scale: 2, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["closed_at"], name: "index_cash_sessions_on_closed_at"
+    t.index ["closed_by_id"], name: "index_cash_sessions_on_closed_by_id"
+    t.index ["opened_at"], name: "index_cash_sessions_on_opened_at"
+    t.index ["opened_by_id"], name: "index_cash_sessions_on_opened_by_id"
+    t.index ["opened_by_id"], name: "index_open_cash_sessions_on_opened_by_id", unique: true, where: "(status = 0)"
+    t.index ["status"], name: "index_cash_sessions_on_status"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -229,6 +268,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_052750) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "audit_logs", "users"
+  add_foreign_key "cash_movements", "cash_sessions"
+  add_foreign_key "cash_movements", "users"
+  add_foreign_key "cash_sessions", "users", column: "closed_by_id"
+  add_foreign_key "cash_sessions", "users", column: "opened_by_id"
   add_foreign_key "ingredients", "categories"
   add_foreign_key "ingredients", "suppliers"
   add_foreign_key "menu_items", "menus"

@@ -2,6 +2,9 @@ class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
   has_many :audit_logs, dependent: :restrict_with_exception
+  has_many :opened_cash_sessions, class_name: "CashSession", foreign_key: :opened_by_id, dependent: :restrict_with_exception, inverse_of: :opened_by
+  has_many :closed_cash_sessions, class_name: "CashSession", foreign_key: :closed_by_id, dependent: :restrict_with_exception, inverse_of: :closed_by
+  has_many :cash_movements, dependent: :restrict_with_exception
 
   devise :database_authenticatable,
          :recoverable,
