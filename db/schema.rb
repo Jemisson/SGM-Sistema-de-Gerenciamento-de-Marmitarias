@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_051857) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_052750) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -92,6 +92,32 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_051857) do
     t.index ["name"], name: "index_ingredients_on_name"
     t.index ["supplier_id", "active"], name: "index_ingredients_on_supplier_id_and_active"
     t.index ["supplier_id"], name: "index_ingredients_on_supplier_id"
+  end
+
+  create_table "menu_items", force: :cascade do |t|
+    t.boolean "available", default: true, null: false
+    t.datetime "created_at", null: false
+    t.bigint "menu_id", null: false
+    t.decimal "price_override", precision: 10, scale: 2
+    t.bigint "product_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["menu_id", "product_id"], name: "index_menu_items_on_menu_id_and_product_id", unique: true
+    t.index ["menu_id"], name: "index_menu_items_on_menu_id"
+    t.index ["product_id"], name: "index_menu_items_on_product_id"
+  end
+
+  create_table "menus", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.date "end_date", null: false
+    t.string "name", null: false
+    t.date "start_date", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_menus_on_active"
+    t.index ["name"], name: "index_menus_on_name"
+    t.index ["start_date", "end_date"], name: "index_menus_on_start_date_and_end_date"
+    t.index ["status"], name: "index_menus_on_status"
   end
 
   create_table "products", force: :cascade do |t|
@@ -205,6 +231,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_051857) do
   add_foreign_key "audit_logs", "users"
   add_foreign_key "ingredients", "categories"
   add_foreign_key "ingredients", "suppliers"
+  add_foreign_key "menu_items", "menus"
+  add_foreign_key "menu_items", "products"
   add_foreign_key "products", "categories"
   add_foreign_key "recipe_items", "ingredients"
   add_foreign_key "recipe_items", "recipes"

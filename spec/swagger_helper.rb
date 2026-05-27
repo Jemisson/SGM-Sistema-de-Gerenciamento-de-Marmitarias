@@ -316,6 +316,72 @@ RSpec.configure do |config|
             },
             required: %w[recipe]
           },
+          menu_item: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              product: {
+                type: :object,
+                properties: {
+                  id: { type: :integer },
+                  code: { type: :string, nullable: true },
+                  name: { type: :string, nullable: true },
+                  sale_price: { type: :string, nullable: true }
+                }
+              },
+              available: { type: :boolean },
+              price_override: { type: :string, nullable: true },
+              effective_price: { type: :string }
+            }
+          },
+          menu: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              name: { type: :string },
+              start_date: { type: :string, format: "date" },
+              end_date: { type: :string, format: "date" },
+              status: { type: :string, enum: %w[draft active inactive] },
+              active: { type: :boolean },
+              menu_items: {
+                type: :array,
+                items: { "$ref" => "#/components/schemas/menu_item" }
+              },
+              created_at: { type: :string, format: "date-time", nullable: true },
+              updated_at: { type: :string, format: "date-time", nullable: true }
+            }
+          },
+          menu_payload: {
+            type: :object,
+            properties: {
+              menu: {
+                type: :object,
+                properties: {
+                  name: { type: :string, example: "Cardapio da Semana" },
+                  start_date: { type: :string, format: "date" },
+                  end_date: { type: :string, format: "date" },
+                  status: { type: :string, enum: %w[draft active inactive], example: "active" },
+                  active: { type: :boolean, example: true },
+                  menu_items_attributes: {
+                    type: :array,
+                    items: {
+                      type: :object,
+                      properties: {
+                        id: { type: :integer },
+                        product_id: { type: :integer },
+                        available: { type: :boolean, example: true },
+                        price_override: { type: :string, example: "23.90" },
+                        _destroy: { type: :boolean, example: false }
+                      },
+                      required: %w[product_id]
+                    }
+                  }
+                },
+                required: %w[name start_date end_date status]
+              }
+            },
+            required: %w[menu]
+          },
           stock_movement: {
             type: :object,
             properties: {

@@ -671,6 +671,242 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/error_response"
+  "/api/v1/menus":
+    get:
+      summary: Lists menus
+      tags:
+      - Menus
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: name
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: status
+        in: query
+        enum:
+        - draft
+        - active
+        - inactive
+        required: false
+        schema:
+          type: string
+        description: ":\n * `draft` \n * `active` \n * `inactive` \n "
+      - name: active
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: date
+        in: query
+        format: date
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: menus listed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/menu"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+    post:
+      summary: Creates a menu
+      tags:
+      - Menus
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: menu created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/menu"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/menu_payload"
+  "/api/v1/menus/current":
+    get:
+      summary: Shows current active menu
+      tags:
+      - Menus
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: current menu found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/menu"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: current menu not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+  "/api/v1/menus/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Shows a menu
+      tags:
+      - Menus
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: menu found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/menu"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: menu not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+    patch:
+      summary: Updates a menu
+      tags:
+      - Menus
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: menu updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/menu"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: menu not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/menu_payload"
+    delete:
+      summary: Soft deletes a menu
+      tags:
+      - Menus
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: menu disabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/menu"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: menu not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
   "/api/v1/products":
     get:
       summary: Lists active products
@@ -1911,6 +2147,117 @@ components:
           - recipe_items_attributes
       required:
       - recipe
+    menu_item:
+      type: object
+      properties:
+        id:
+          type: integer
+        product:
+          type: object
+          properties:
+            id:
+              type: integer
+            code:
+              type: string
+              nullable: true
+            name:
+              type: string
+              nullable: true
+            sale_price:
+              type: string
+              nullable: true
+        available:
+          type: boolean
+        price_override:
+          type: string
+          nullable: true
+        effective_price:
+          type: string
+    menu:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+          - draft
+          - active
+          - inactive
+        active:
+          type: boolean
+        menu_items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/menu_item"
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+    menu_payload:
+      type: object
+      properties:
+        menu:
+          type: object
+          properties:
+            name:
+              type: string
+              example: Cardapio da Semana
+            start_date:
+              type: string
+              format: date
+            end_date:
+              type: string
+              format: date
+            status:
+              type: string
+              enum:
+              - draft
+              - active
+              - inactive
+              example: active
+            active:
+              type: boolean
+              example: true
+            menu_items_attributes:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  product_id:
+                    type: integer
+                  available:
+                    type: boolean
+                    example: true
+                  price_override:
+                    type: string
+                    example: '23.90'
+                  _destroy:
+                    type: boolean
+                    example: false
+                required:
+                - product_id
+          required:
+          - name
+          - start_date
+          - end_date
+          - status
+      required:
+      - menu
     stock_movement:
       type: object
       properties:

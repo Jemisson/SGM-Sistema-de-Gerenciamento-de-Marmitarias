@@ -9,6 +9,9 @@ Rails.application.routes.draw do
       resources :audit_logs, only: :index
       resources :categories
       resources :ingredients
+      resources :menus do
+        get :current, on: :collection
+      end
       resources :products
       resources :recipes
       resources :stock_movements, only: %i[index create show]
