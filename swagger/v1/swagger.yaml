@@ -878,6 +878,214 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/error_response"
+  "/api/v1/recipes":
+    get:
+      summary: Lists active recipes
+      tags:
+      - Recipes
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: name
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: product_id
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: active
+        in: query
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: recipes listed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/recipe"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+    post:
+      summary: Creates a recipe
+      tags:
+      - Recipes
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: recipe created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/recipe"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/recipe_payload"
+  "/api/v1/recipes/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Shows a recipe
+      tags:
+      - Recipes
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: recipe found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/recipe"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: recipe not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+    patch:
+      summary: Updates a recipe
+      tags:
+      - Recipes
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: recipe updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/recipe"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: recipe not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/recipe_payload"
+    delete:
+      summary: Soft deletes a recipe
+      tags:
+      - Recipes
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: recipe disabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/recipe"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: recipe not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
   "/api/v1/stock_movements":
     get:
       summary: Lists stock movements
@@ -1603,6 +1811,106 @@ components:
           - sale_price
       required:
       - product
+    recipe_item:
+      type: object
+      properties:
+        id:
+          type: integer
+        ingredient:
+          type: object
+          properties:
+            id:
+              type: integer
+            code:
+              type: string
+              nullable: true
+            name:
+              type: string
+              nullable: true
+        quantity:
+          type: string
+        unit:
+          type: string
+    recipe:
+      type: object
+      properties:
+        id:
+          type: integer
+        product:
+          type: object
+          properties:
+            id:
+              type: integer
+            code:
+              type: string
+              nullable: true
+            name:
+              type: string
+              nullable: true
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        active:
+          type: boolean
+        recipe_items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/recipe_item"
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+    recipe_payload:
+      type: object
+      properties:
+        recipe:
+          type: object
+          properties:
+            product_id:
+              type: integer
+            name:
+              type: string
+              example: Receita Marmita de Frango
+            description:
+              type: string
+              example: Composicao padrao da marmita
+            active:
+              type: boolean
+              example: true
+            recipe_items_attributes:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  ingredient_id:
+                    type: integer
+                  quantity:
+                    type: string
+                    example: '0.250'
+                  unit:
+                    type: string
+                    example: kg
+                  _destroy:
+                    type: boolean
+                    example: false
+                required:
+                - ingredient_id
+                - quantity
+                - unit
+          required:
+          - product_id
+          - name
+          - recipe_items_attributes
+      required:
+      - recipe
     stock_movement:
       type: object
       properties:

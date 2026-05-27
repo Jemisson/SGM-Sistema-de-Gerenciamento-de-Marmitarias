@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       resources :categories
       resources :ingredients
       resources :products
+      resources :recipes
       resources :stock_movements, only: %i[index create show]
       resources :suppliers
 

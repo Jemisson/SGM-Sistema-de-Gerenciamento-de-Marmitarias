@@ -247,6 +247,75 @@ RSpec.configure do |config|
             },
             required: %w[product]
           },
+          recipe_item: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              ingredient: {
+                type: :object,
+                properties: {
+                  id: { type: :integer },
+                  code: { type: :string, nullable: true },
+                  name: { type: :string, nullable: true }
+                }
+              },
+              quantity: { type: :string },
+              unit: { type: :string }
+            }
+          },
+          recipe: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              product: {
+                type: :object,
+                properties: {
+                  id: { type: :integer },
+                  code: { type: :string, nullable: true },
+                  name: { type: :string, nullable: true }
+                }
+              },
+              name: { type: :string },
+              description: { type: :string, nullable: true },
+              active: { type: :boolean },
+              recipe_items: {
+                type: :array,
+                items: { "$ref" => "#/components/schemas/recipe_item" }
+              },
+              created_at: { type: :string, format: "date-time", nullable: true },
+              updated_at: { type: :string, format: "date-time", nullable: true }
+            }
+          },
+          recipe_payload: {
+            type: :object,
+            properties: {
+              recipe: {
+                type: :object,
+                properties: {
+                  product_id: { type: :integer },
+                  name: { type: :string, example: "Receita Marmita de Frango" },
+                  description: { type: :string, example: "Composicao padrao da marmita" },
+                  active: { type: :boolean, example: true },
+                  recipe_items_attributes: {
+                    type: :array,
+                    items: {
+                      type: :object,
+                      properties: {
+                        id: { type: :integer },
+                        ingredient_id: { type: :integer },
+                        quantity: { type: :string, example: "0.250" },
+                        unit: { type: :string, example: "kg" },
+                        _destroy: { type: :boolean, example: false }
+                      },
+                      required: %w[ingredient_id quantity unit]
+                    }
+                  }
+                },
+                required: %w[product_id name recipe_items_attributes]
+              }
+            },
+            required: %w[recipe]
+          },
           stock_movement: {
             type: :object,
             properties: {

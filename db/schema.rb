@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_051215) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_051857) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -109,6 +109,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_051215) do
     t.index ["name"], name: "index_products_on_name"
   end
 
+  create_table "recipe_items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "ingredient_id", null: false
+    t.decimal "quantity", precision: 12, scale: 3, null: false
+    t.bigint "recipe_id", null: false
+    t.string "unit", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ingredient_id"], name: "index_recipe_items_on_ingredient_id"
+    t.index ["recipe_id", "ingredient_id"], name: "index_recipe_items_on_recipe_id_and_ingredient_id", unique: true
+    t.index ["recipe_id"], name: "index_recipe_items_on_recipe_id"
+  end
+
+  create_table "recipes", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.bigint "product_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_recipes_on_active"
+    t.index ["name"], name: "index_recipes_on_name"
+    t.index ["product_id"], name: "index_active_recipes_on_product_id", unique: true, where: "(active = true)"
+    t.index ["product_id"], name: "index_recipes_on_product_id"
+  end
+
   create_table "stock_movements", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "ingredient_id", null: false
@@ -181,6 +206,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_051215) do
   add_foreign_key "ingredients", "categories"
   add_foreign_key "ingredients", "suppliers"
   add_foreign_key "products", "categories"
+  add_foreign_key "recipe_items", "ingredients"
+  add_foreign_key "recipe_items", "recipes"
+  add_foreign_key "recipes", "products"
   add_foreign_key "stock_movements", "ingredients"
   add_foreign_key "stock_movements", "users"
 end
