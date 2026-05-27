@@ -442,6 +442,49 @@ RSpec.configure do |config|
             },
             required: %w[sale]
           },
+          financial_entry: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              cash_session_id: { type: :integer, nullable: true },
+              user: { "$ref" => "#/components/schemas/user" },
+              entry_type: { type: :string, enum: %w[income expense] },
+              category: { type: :string, nullable: true },
+              description: { type: :string, nullable: true },
+              amount: { type: :string },
+              payment_method: { type: :string, enum: %w[cash credit_card debit_card pix bank_transfer other] },
+              source_type: { type: :string, nullable: true },
+              source_id: { type: :integer, nullable: true },
+              occurred_at: { type: :string, format: "date-time" },
+              active: { type: :boolean },
+              created_at: { type: :string, format: "date-time", nullable: true },
+              updated_at: { type: :string, format: "date-time", nullable: true }
+            }
+          },
+          financial_entry_payload: {
+            type: :object,
+            properties: {
+              financial_entry: {
+                type: :object,
+                properties: {
+                  cash_session_id: { type: :integer },
+                  entry_type: { type: :string, enum: %w[income expense], example: "expense" },
+                  category: { type: :string, example: "Despesas operacionais" },
+                  description: { type: :string, example: "Compra emergencial" },
+                  amount: { type: :string, example: "30.00" },
+                  payment_method: {
+                    type: :string,
+                    enum: %w[cash credit_card debit_card pix bank_transfer other],
+                    example: "cash"
+                  },
+                  occurred_at: { type: :string, format: "date-time" },
+                  active: { type: :boolean, example: true }
+                },
+                required: %w[entry_type amount payment_method occurred_at]
+              }
+            },
+            required: %w[financial_entry]
+          },
           menu_item: {
             type: :object,
             properties: {

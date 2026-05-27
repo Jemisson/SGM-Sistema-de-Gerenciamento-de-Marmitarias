@@ -13,6 +13,7 @@ Rails.application.routes.draw do
         patch :close, on: :member
       end
       resources :categories
+      resources :financial_entries
       resources :ingredients
       resources :menus do
         get :current, on: :collection

@@ -1,5 +1,3 @@
-ultimo executado foi o passo 15 — CashSessions e CashMovements
-
 # SGM - Sistema de Gerenciamento para Marmitaria
 
 Este repositório contém a API do **SGM - Sistema de Gerenciamento para Marmitaria**.

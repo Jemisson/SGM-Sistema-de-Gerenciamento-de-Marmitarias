@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_210403) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_211455) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -106,6 +106,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_210403) do
     t.datetime "updated_at", null: false
     t.index ["active"], name: "index_categories_on_active"
     t.index ["name"], name: "index_categories_on_name", unique: true
+  end
+
+  create_table "financial_entries", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.bigint "cash_session_id"
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.integer "entry_type", null: false
+    t.datetime "occurred_at", null: false
+    t.integer "payment_method", null: false
+    t.bigint "source_id"
+    t.string "source_type"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["active"], name: "index_financial_entries_on_active"
+    t.index ["cash_session_id"], name: "index_financial_entries_on_cash_session_id"
+    t.index ["category"], name: "index_financial_entries_on_category"
+    t.index ["entry_type"], name: "index_financial_entries_on_entry_type"
+    t.index ["occurred_at"], name: "index_financial_entries_on_occurred_at"
+    t.index ["payment_method"], name: "index_financial_entries_on_payment_method"
+    t.index ["source_type", "source_id"], name: "index_financial_entries_on_source_type_and_source_id"
+    t.index ["user_id"], name: "index_financial_entries_on_user_id"
   end
 
   create_table "ingredients", force: :cascade do |t|
@@ -300,6 +324,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_210403) do
   add_foreign_key "cash_movements", "users"
   add_foreign_key "cash_sessions", "users", column: "closed_by_id"
   add_foreign_key "cash_sessions", "users", column: "opened_by_id"
+  add_foreign_key "financial_entries", "cash_sessions"
+  add_foreign_key "financial_entries", "users"
   add_foreign_key "ingredients", "categories"
   add_foreign_key "ingredients", "suppliers"
   add_foreign_key "menu_items", "menus"

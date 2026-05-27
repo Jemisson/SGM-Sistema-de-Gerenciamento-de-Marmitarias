@@ -637,6 +637,231 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/error_response"
+  "/api/v1/financial_entries":
+    get:
+      summary: Lists financial entries
+      tags:
+      - Financial Entries
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: entry_type
+        in: query
+        enum:
+        - income
+        - expense
+        required: false
+        schema:
+          type: string
+        description: ":\n * `income` \n * `expense` \n "
+      - name: payment_method
+        in: query
+        enum:
+        - cash
+        - credit_card
+        - debit_card
+        - pix
+        - bank_transfer
+        - other
+        required: false
+        schema:
+          type: string
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: start_date
+        in: query
+        format: date-time
+        required: false
+        schema:
+          type: string
+      - name: end_date
+        in: query
+        format: date-time
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: financial entries listed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/financial_entry"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+    post:
+      summary: Creates a financial entry
+      tags:
+      - Financial Entries
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: financial entry created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/financial_entry"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/financial_entry_payload"
+  "/api/v1/financial_entries/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Shows a financial entry
+      tags:
+      - Financial Entries
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: financial entry found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/financial_entry"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: financial entry not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+    patch:
+      summary: Updates a financial entry
+      tags:
+      - Financial Entries
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: financial entry updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/financial_entry"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: financial entry not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/financial_entry_payload"
+    delete:
+      summary: Inactivates a financial entry
+      tags:
+      - Financial Entries
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: financial entry inactivated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/financial_entry"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '404':
+          description: financial entry not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
   "/api/v1/ingredients":
     get:
       summary: Lists ingredients
@@ -2702,6 +2927,103 @@ components:
           - sale_items_attributes
       required:
       - sale
+    financial_entry:
+      type: object
+      properties:
+        id:
+          type: integer
+        cash_session_id:
+          type: integer
+          nullable: true
+        user:
+          "$ref": "#/components/schemas/user"
+        entry_type:
+          type: string
+          enum:
+          - income
+          - expense
+        category:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        amount:
+          type: string
+        payment_method:
+          type: string
+          enum:
+          - cash
+          - credit_card
+          - debit_card
+          - pix
+          - bank_transfer
+          - other
+        source_type:
+          type: string
+          nullable: true
+        source_id:
+          type: integer
+          nullable: true
+        occurred_at:
+          type: string
+          format: date-time
+        active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+    financial_entry_payload:
+      type: object
+      properties:
+        financial_entry:
+          type: object
+          properties:
+            cash_session_id:
+              type: integer
+            entry_type:
+              type: string
+              enum:
+              - income
+              - expense
+              example: expense
+            category:
+              type: string
+              example: Despesas operacionais
+            description:
+              type: string
+              example: Compra emergencial
+            amount:
+              type: string
+              example: '30.00'
+            payment_method:
+              type: string
+              enum:
+              - cash
+              - credit_card
+              - debit_card
+              - pix
+              - bank_transfer
+              - other
+              example: cash
+            occurred_at:
+              type: string
+              format: date-time
+            active:
+              type: boolean
+              example: true
+          required:
+          - entry_type
+          - amount
+          - payment_method
+          - occurred_at
+      required:
+      - financial_entry
     menu_item:
       type: object
       properties:
