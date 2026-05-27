@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_044707) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_050045) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -66,6 +66,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_044707) do
     t.index ["supplier_id"], name: "index_ingredients_on_supplier_id"
   end
 
+  create_table "stock_movements", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "ingredient_id", null: false
+    t.integer "movement_type", null: false
+    t.datetime "occurred_at", null: false
+    t.decimal "quantity", precision: 12, scale: 3, null: false
+    t.text "reason"
+    t.bigint "source_id"
+    t.string "source_type"
+    t.decimal "unit_cost", precision: 10, scale: 2
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["ingredient_id"], name: "index_stock_movements_on_ingredient_id"
+    t.index ["movement_type"], name: "index_stock_movements_on_movement_type"
+    t.index ["occurred_at"], name: "index_stock_movements_on_occurred_at"
+    t.index ["source_type", "source_id"], name: "index_stock_movements_on_source_type_and_source_id"
+    t.index ["user_id"], name: "index_stock_movements_on_user_id"
+  end
+
   create_table "suppliers", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.string "city"
@@ -116,4 +135,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_044707) do
   add_foreign_key "audit_logs", "users"
   add_foreign_key "ingredients", "categories"
   add_foreign_key "ingredients", "suppliers"
+  add_foreign_key "stock_movements", "ingredients"
+  add_foreign_key "stock_movements", "users"
 end

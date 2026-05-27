@@ -1,6 +1,7 @@
 class Ingredient < ApplicationRecord
   belongs_to :category
   belongs_to :supplier
+  has_many :stock_movements, dependent: :restrict_with_exception
 
   validates :code, presence: true, uniqueness: true
   validates :name, :unit, presence: true

@@ -207,6 +207,65 @@ RSpec.configure do |config|
             },
             required: %w[ingredient]
           },
+          stock_movement: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              ingredient: {
+                type: :object,
+                properties: {
+                  id: { type: :integer },
+                  code: { type: :string, nullable: true },
+                  name: { type: :string, nullable: true }
+                }
+              },
+              user: {
+                type: :object,
+                properties: {
+                  id: { type: :integer },
+                  name: { type: :string, nullable: true },
+                  email: { type: :string, nullable: true },
+                  role: { type: :string, nullable: true }
+                }
+              },
+              movement_type: {
+                type: :string,
+                enum: %w[entry exit adjustment production_consumption sale_consumption]
+              },
+              quantity: { type: :string },
+              unit_cost: { type: :string, nullable: true },
+              reason: { type: :string, nullable: true },
+              source_type: { type: :string, nullable: true },
+              source_id: { type: :integer, nullable: true },
+              occurred_at: { type: :string, format: "date-time" },
+              created_at: { type: :string, format: "date-time", nullable: true },
+              updated_at: { type: :string, format: "date-time", nullable: true }
+            }
+          },
+          stock_movement_payload: {
+            type: :object,
+            properties: {
+              stock_movement: {
+                type: :object,
+                properties: {
+                  ingredient_id: { type: :integer },
+                  movement_type: {
+                    type: :string,
+                    enum: %w[entry exit adjustment production_consumption sale_consumption],
+                    example: "entry"
+                  },
+                  quantity: { type: :string, example: "5.000" },
+                  unit_cost: { type: :string, example: "12.50" },
+                  reason: { type: :string, example: "Compra de insumos" },
+                  source_type: { type: :string, example: "Production" },
+                  source_id: { type: :integer, example: 123 },
+                  occurred_at: { type: :string, format: "date-time" }
+                },
+                required: %w[ingredient_id movement_type quantity]
+              }
+            },
+            required: %w[stock_movement]
+          },
           pagination_meta: {
             type: :object,
             properties: {

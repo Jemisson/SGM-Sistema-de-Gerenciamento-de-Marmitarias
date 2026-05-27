@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       resources :audit_logs, only: :index
       resources :categories
       resources :ingredients
+      resources :stock_movements, only: %i[index create show]
       resources :suppliers
 
       namespace :auth do
