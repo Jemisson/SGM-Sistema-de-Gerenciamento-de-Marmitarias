@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :audit_logs, only: :index
+      resources :categories
 
       namespace :auth do
         post "login", to: "sessions#create"

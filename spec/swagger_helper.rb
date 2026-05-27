@@ -81,6 +81,32 @@ RSpec.configure do |config|
               occurred_at: { type: :string, format: "date-time" }
             }
           },
+          category: {
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              name: { type: :string },
+              description: { type: :string, nullable: true },
+              active: { type: :boolean },
+              created_at: { type: :string, format: "date-time", nullable: true },
+              updated_at: { type: :string, format: "date-time", nullable: true }
+            }
+          },
+          category_payload: {
+            type: :object,
+            properties: {
+              category: {
+                type: :object,
+                properties: {
+                  name: { type: :string, example: "Marmitas" },
+                  description: { type: :string, example: "Categorias de marmitas prontas" },
+                  active: { type: :boolean, example: true }
+                },
+                required: %w[name]
+              }
+            },
+            required: %w[category]
+          },
           pagination_meta: {
             type: :object,
             properties: {

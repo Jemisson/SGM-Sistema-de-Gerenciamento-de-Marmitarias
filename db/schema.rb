@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_26_183803) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_043209) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -29,6 +29,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_26_183803) do
     t.index ["auditable_type", "auditable_id"], name: "index_audit_logs_on_auditable_type_and_auditable_id"
     t.index ["occurred_at"], name: "index_audit_logs_on_occurred_at"
     t.index ["user_id"], name: "index_audit_logs_on_user_id"
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_categories_on_active"
+    t.index ["name"], name: "index_categories_on_name", unique: true
   end
 
   create_table "users", force: :cascade do |t|
