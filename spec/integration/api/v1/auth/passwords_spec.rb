@@ -3,7 +3,7 @@ require "swagger_helper"
 RSpec.describe "API V1 Password Recovery", type: :request do
   path "/api/v1/auth/password" do
     post "Requests password reset instructions" do
-      tags "Authentication"
+      tags "Auth"
       consumes "application/json"
       produces "application/json"
 
@@ -51,7 +51,7 @@ RSpec.describe "API V1 Password Recovery", type: :request do
     end
 
     patch "Resets password using a recovery token" do
-      tags "Authentication"
+      tags "Auth"
       consumes "application/json"
       produces "application/json"
 

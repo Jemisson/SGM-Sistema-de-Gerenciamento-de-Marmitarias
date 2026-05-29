@@ -21,6 +21,23 @@ RSpec.configure do |config|
         title: "SGM - Sistema de Gerenciamento para Marmitaria API",
         version: "v1"
       },
+      tags: [
+        { name: "Auth", description: "Autenticacao, logout, usuario atual e recuperacao de senha" },
+        { name: "Users", description: "Contratos de usuario para autenticacao e gestao futura" },
+        { name: "Categories", description: "Categorias de insumos e produtos" },
+        { name: "Suppliers", description: "Fornecedores" },
+        { name: "Ingredients", description: "Insumos e estoque base" },
+        { name: "Stock Movements", description: "Movimentacoes de estoque" },
+        { name: "Products", description: "Produtos vendidos" },
+        { name: "Recipes", description: "Receitas e composicao de produtos" },
+        { name: "Menus", description: "Cardapios e disponibilidade de produtos" },
+        { name: "Cash Sessions", description: "Abertura, acompanhamento e fechamento de caixa" },
+        { name: "Sales", description: "Registro e cancelamento de vendas" },
+        { name: "Financial Entries", description: "Lancamentos financeiros manuais" },
+        { name: "Reports", description: "Relatorios gerenciais" },
+        { name: "Analytics", description: "Analises avancadas" },
+        { name: "Audit Logs", description: "Logs de auditoria" }
+      ],
       paths: {},
       components: {
         securitySchemes: {
@@ -40,6 +57,49 @@ RSpec.configure do |config|
               role: { type: :string, enum: %w[admin manager cashier] },
               active: { type: :boolean }
             }
+          },
+          user_payload: {
+            type: :object,
+            properties: {
+              user: {
+                type: :object,
+                properties: {
+                  name: { type: :string, example: "Administrador SGM" },
+                  birth_date: { type: :string, format: "date", example: "1990-01-01" },
+                  cpf: { type: :string, example: "12345678901" },
+                  phone: { type: :string, example: "44999999999" },
+                  role: { type: :string, enum: %w[admin manager cashier], example: "admin" },
+                  gender: { type: :string, example: "nao_informado" },
+                  marital_status: { type: :string, example: "solteiro" },
+                  email: { type: :string, example: "admin@sgm.test" },
+                  password: { type: :string, example: "password123" },
+                  password_confirmation: { type: :string, example: "password123" },
+                  active: { type: :boolean, example: true },
+                  street: { type: :string, example: "Avenida Colombo" },
+                  number: { type: :string, example: "5790" },
+                  neighborhood: { type: :string, example: "Zona 7" },
+                  city: { type: :string, example: "Maringa" },
+                  state: { type: :string, example: "PR" },
+                  zip_code: { type: :string, example: "87020900" }
+                },
+                required: %w[name cpf role email password password_confirmation]
+              }
+            },
+            required: %w[user]
+          },
+          login_payload: {
+            type: :object,
+            properties: {
+              user: {
+                type: :object,
+                properties: {
+                  email: { type: :string, example: "caixa@sgm.test" },
+                  password: { type: :string, example: "password123" }
+                },
+                required: %w[email password]
+              }
+            },
+            required: %w[user]
           },
           error_response: {
             type: :object,

@@ -3,24 +3,11 @@ require "swagger_helper"
 RSpec.describe "API V1 Authentication", type: :request do
   path "/api/v1/auth/login" do
     post "Authenticates a user" do
-      tags "Authentication"
+      tags "Auth"
       consumes "application/json"
       produces "application/json"
 
-      parameter name: :credentials, in: :body, schema: {
-        type: :object,
-        properties: {
-          user: {
-            type: :object,
-            properties: {
-              email: { type: :string, example: "caixa@sgm.test" },
-              password: { type: :string, example: "password123" }
-            },
-            required: %w[email password]
-          }
-        },
-        required: %w[user]
-      }
+      parameter name: :credentials, in: :body, schema: { "$ref" => "#/components/schemas/login_payload" }
 
       response "200", "authenticated" do
         let!(:user) { create(:user, email: "caixa@sgm.test", password: "password123") }
@@ -67,7 +54,7 @@ RSpec.describe "API V1 Authentication", type: :request do
 
   path "/api/v1/auth/logout" do
     delete "Logs out the current user" do
-      tags "Authentication"
+      tags "Auth"
       produces "application/json"
       security [bearerAuth: []]
 
@@ -100,7 +87,7 @@ RSpec.describe "API V1 Authentication", type: :request do
 
   path "/api/v1/auth/me" do
     get "Returns the authenticated user" do
-      tags "Authentication"
+      tags "Auth"
       produces "application/json"
       security [bearerAuth: []]
 
