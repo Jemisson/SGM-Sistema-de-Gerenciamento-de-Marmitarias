@@ -54,9 +54,22 @@ jobs:
           STAGING_DEPLOY_HOST: ${{ vars.STAGING_DEPLOY_HOST || '108.181.224.196' }}
           STAGING_DEPLOY_PORT: ${{ vars.STAGING_DEPLOY_PORT || '22' }}
 
+      - name: Upload Rails master key
+        run: |
+          test -n "${RAILS_MASTER_KEY}"
+          printf '%s' "${RAILS_MASTER_KEY}" | ssh -p "${STAGING_DEPLOY_PORT}" "${STAGING_DEPLOY_USER}@${STAGING_DEPLOY_HOST}" \
+            "umask 077 && mkdir -p '${STAGING_DEPLOY_TO}/shared/config' && cat > '${STAGING_DEPLOY_TO}/shared/config/master.key'"
+        env:
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          STAGING_DEPLOY_HOST: ${{ vars.STAGING_DEPLOY_HOST || '108.181.224.196' }}
+          STAGING_DEPLOY_USER: ${{ vars.STAGING_DEPLOY_USER || 'staging' }}
+          STAGING_DEPLOY_PORT: ${{ vars.STAGING_DEPLOY_PORT || '22' }}
+          STAGING_DEPLOY_TO: ${{ vars.STAGING_DEPLOY_TO || '/home/staging/sgm-api' }}
+
       - name: Deploy with Mina
         run: bundle exec mina staging deploy
         env:
           STAGING_DEPLOY_HOST: ${{ vars.STAGING_DEPLOY_HOST || '108.181.224.196' }}
           STAGING_DEPLOY_USER: ${{ vars.STAGING_DEPLOY_USER || 'staging' }}
           STAGING_DEPLOY_PORT: ${{ vars.STAGING_DEPLOY_PORT || '22' }}
+          STAGING_DEPLOY_TO: ${{ vars.STAGING_DEPLOY_TO || '/home/staging/sgm-api' }}
