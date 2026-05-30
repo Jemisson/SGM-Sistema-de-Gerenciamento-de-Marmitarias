@@ -8,8 +8,12 @@ module Api
         authorize FinancialEntry
 
         entries = filtered_entries.includes(:user).order(occurred_at: :desc, id: :desc)
+        paginated_entries = paginate(entries)
 
-        render_success(entries.map { |entry| serialize_financial_entry(entry) })
+        render_success(
+          paginated_entries.map { |entry| serialize_financial_entry(entry) },
+          meta: pagination_meta(paginated_entries)
+        )
       end
 
       def show

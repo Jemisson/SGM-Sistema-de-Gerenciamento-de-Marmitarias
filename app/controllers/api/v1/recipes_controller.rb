@@ -8,8 +8,12 @@ module Api
         authorize Recipe
 
         recipes = filtered_recipes.includes(:product, recipe_items: :ingredient).order(:name)
+        paginated_recipes = paginate(recipes)
 
-        render_success(recipes.map { |recipe| serialize_recipe(recipe) })
+        render_success(
+          paginated_recipes.map { |recipe| serialize_recipe(recipe) },
+          meta: pagination_meta(paginated_recipes)
+        )
       end
 
       def show

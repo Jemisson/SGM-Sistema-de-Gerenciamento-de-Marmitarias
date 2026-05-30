@@ -52,10 +52,23 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               id: { type: :integer },
-              name: { type: :string },
-              email: { type: :string },
-              role: { type: :string, enum: %w[admin manager cashier] },
-              active: { type: :boolean }
+              name: { type: :string, example: "Caixa SGM" },
+              birth_date: { type: :string, format: "date", nullable: true, example: "1992-06-10" },
+              cpf: { type: :string, example: "22222222222" },
+              phone: { type: :string, nullable: true, example: "44999999999" },
+              role: { type: :string, enum: %w[admin manager cashier], example: "cashier" },
+              gender: { type: :string, nullable: true, example: "not_informed" },
+              marital_status: { type: :string, nullable: true, example: "not_informed" },
+              email: { type: :string, example: "cashier@example.com" },
+              active: { type: :boolean, example: true },
+              street: { type: :string, nullable: true, example: "Avenida Colombo" },
+              number: { type: :string, nullable: true, example: "5790" },
+              neighborhood: { type: :string, nullable: true, example: "Zona 7" },
+              city: { type: :string, nullable: true, example: "Maringa" },
+              state: { type: :string, nullable: true, example: "PR" },
+              zip_code: { type: :string, nullable: true, example: "87020900" },
+              created_at: { type: :string, format: "date-time", nullable: true },
+              updated_at: { type: :string, format: "date-time", nullable: true }
             }
           },
           user_payload: {
@@ -93,7 +106,7 @@ RSpec.configure do |config|
               user: {
                 type: :object,
                 properties: {
-                  email: { type: :string, example: "caixa@sgm.test" },
+                  email: { type: :string, example: "cashier@example.com" },
                   password: { type: :string, example: "password123" }
                 },
                 required: %w[email password]

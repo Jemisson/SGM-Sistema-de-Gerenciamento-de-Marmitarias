@@ -10,6 +10,8 @@ RSpec.describe "API V1 Stock Movements", type: :request do
       parameter name: :movement_type, in: :query, type: :string, required: false, enum: StockMovement.movement_types.keys
       parameter name: :start_date, in: :query, type: :string, required: false, example: "2026-05-01T00:00:00Z"
       parameter name: :end_date, in: :query, type: :string, required: false, example: "2026-05-31T23:59:59Z"
+      parameter name: :page, in: :query, type: :integer, required: false
+      parameter name: :per_page, in: :query, type: :integer, required: false
 
       response "200", "stock movements listed" do
         let(:user) { create(:user, :admin) }
@@ -18,6 +20,8 @@ RSpec.describe "API V1 Stock Movements", type: :request do
         let(:movement_type) { nil }
         let(:start_date) { nil }
         let(:end_date) { nil }
+        let(:page) { nil }
+        let(:per_page) { nil }
 
         before do
           create(:stock_movement, user: user)
@@ -28,7 +32,8 @@ RSpec.describe "API V1 Stock Movements", type: :request do
                  data: {
                    type: :array,
                    items: { "$ref" => "#/components/schemas/stock_movement" }
-                 }
+                 },
+                 meta: { "$ref" => "#/components/schemas/pagination_meta" }
                }
 
         run_test!
@@ -40,6 +45,8 @@ RSpec.describe "API V1 Stock Movements", type: :request do
         let(:movement_type) { nil }
         let(:start_date) { nil }
         let(:end_date) { nil }
+        let(:page) { nil }
+        let(:per_page) { nil }
 
         schema "$ref" => "#/components/schemas/error_response"
 
@@ -53,6 +60,8 @@ RSpec.describe "API V1 Stock Movements", type: :request do
         let(:movement_type) { nil }
         let(:start_date) { nil }
         let(:end_date) { nil }
+        let(:page) { nil }
+        let(:per_page) { nil }
 
         schema "$ref" => "#/components/schemas/error_response"
 

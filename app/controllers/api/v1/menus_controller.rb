@@ -8,8 +8,12 @@ module Api
         authorize Menu
 
         menus = visible_menus(filtered_menus).includes(menu_items: :product).order(start_date: :desc, name: :asc)
+        paginated_menus = paginate(menus)
 
-        render_success(menus.map { |menu| serialize_menu(menu) })
+        render_success(
+          paginated_menus.map { |menu| serialize_menu(menu) },
+          meta: pagination_meta(paginated_menus)
+        )
       end
 
       def current

@@ -38,6 +38,7 @@ Rails.application.routes.draw do
       end
       resources :stock_movements, only: %i[index create show]
       resources :suppliers
+      resources :users
 
       namespace :auth do
         post "login", to: "sessions#create"

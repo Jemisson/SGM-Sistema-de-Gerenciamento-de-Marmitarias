@@ -8,8 +8,12 @@ module Api
         authorize Sale
 
         sales = visible_sales.includes(:user, sale_items: :product).order(sold_at: :desc, id: :desc)
+        paginated_sales = paginate(sales)
 
-        render_success(sales.map { |sale| serialize_sale(sale) })
+        render_success(
+          paginated_sales.map { |sale| serialize_sale(sale) },
+          meta: pagination_meta(paginated_sales)
+        )
       end
 
       def show

@@ -8,8 +8,12 @@ module Api
         authorize StockMovement
 
         stock_movements = filtered_stock_movements.includes(:ingredient, :user).order(occurred_at: :desc, id: :desc)
+        paginated_stock_movements = paginate(stock_movements)
 
-        render_success(stock_movements.map { |stock_movement| serialize_stock_movement(stock_movement) })
+        render_success(
+          paginated_stock_movements.map { |stock_movement| serialize_stock_movement(stock_movement) },
+          meta: pagination_meta(paginated_stock_movements)
+        )
       end
 
       def show

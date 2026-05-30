@@ -8,8 +8,12 @@ module Api
         authorize Ingredient
 
         ingredients = filtered_ingredients.includes(:category, :supplier).order(:name)
+        paginated_ingredients = paginate(ingredients)
 
-        render_success(ingredients.map { |ingredient| serialize_ingredient(ingredient) })
+        render_success(
+          paginated_ingredients.map { |ingredient| serialize_ingredient(ingredient) },
+          meta: pagination_meta(paginated_ingredients)
+        )
       end
 
       def show

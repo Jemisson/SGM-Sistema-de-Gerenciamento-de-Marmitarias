@@ -6,10 +6,14 @@ RSpec.describe "API V1 Cash Sessions", type: :request do
       tags "Cash Sessions"
       produces "application/json"
       security [bearerAuth: []]
+      parameter name: :page, in: :query, type: :integer, required: false
+      parameter name: :per_page, in: :query, type: :integer, required: false
 
       response "200", "cash sessions listed" do
         let(:user) { create(:user, :manager) }
         let(:Authorization) { authorization_header_for(user) }
+        let(:page) { nil }
+        let(:per_page) { nil }
 
         before do
           create(:cash_session)
@@ -20,7 +24,8 @@ RSpec.describe "API V1 Cash Sessions", type: :request do
                  data: {
                    type: :array,
                    items: { "$ref" => "#/components/schemas/cash_session" }
-                 }
+                 },
+                 meta: { "$ref" => "#/components/schemas/pagination_meta" }
                }
 
         run_test!
@@ -28,6 +33,8 @@ RSpec.describe "API V1 Cash Sessions", type: :request do
 
       response "401", "missing or invalid token" do
         let(:Authorization) { "Bearer invalid-token" }
+        let(:page) { nil }
+        let(:per_page) { nil }
 
         schema "$ref" => "#/components/schemas/error_response"
 
@@ -37,6 +44,8 @@ RSpec.describe "API V1 Cash Sessions", type: :request do
       response "403", "forbidden" do
         let(:user) { create(:user, :admin) }
         let(:Authorization) { authorization_header_for(user) }
+        let(:page) { nil }
+        let(:per_page) { nil }
 
         schema "$ref" => "#/components/schemas/error_response"
 

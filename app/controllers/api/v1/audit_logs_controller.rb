@@ -3,18 +3,15 @@ module Api
     class AuditLogsController < Auth::BaseController
       before_action :authenticate_user_from_token!
 
-      DEFAULT_PER_PAGE = 20
-      MAX_PER_PAGE = 100
-
       def index
         authorize AuditLog
 
         audit_logs = filtered_audit_logs.order(occurred_at: :desc, id: :desc)
-        paginated_logs = audit_logs.offset(offset).limit(per_page)
+        paginated_logs = paginate(audit_logs)
 
         render_success(
           paginated_logs.map { |audit_log| serialized_audit_log(audit_log) },
-          meta: pagination_meta(audit_logs.count)
+          meta: pagination_meta(paginated_logs)
         )
       end
 
@@ -49,29 +46,6 @@ module Api
         return scope if filter_params[:end_date].blank?
 
         scope.where("occurred_at <= ?", Time.zone.parse(filter_params[:end_date]))
-      end
-
-      def page
-        [filter_params.fetch(:page, 1).to_i, 1].max
-      end
-
-      def per_page
-        requested_per_page = filter_params.fetch(:per_page, DEFAULT_PER_PAGE).to_i
-
-        requested_per_page.clamp(1, MAX_PER_PAGE)
-      end
-
-      def offset
-        (page - 1) * per_page
-      end
-
-      def pagination_meta(total_count)
-        {
-          page: page,
-          per_page: per_page,
-          total_count: total_count,
-          total_pages: (total_count.to_f / per_page).ceil
-        }
       end
 
       def serialized_audit_log(audit_log)

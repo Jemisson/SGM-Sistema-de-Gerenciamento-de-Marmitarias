@@ -8,8 +8,12 @@ module Api
         authorize Supplier
 
         suppliers = filtered_suppliers.order(:name)
+        paginated_suppliers = paginate(suppliers)
 
-        render_success(suppliers.map { |supplier| serialize_supplier(supplier) })
+        render_success(
+          paginated_suppliers.map { |supplier| serialize_supplier(supplier) },
+          meta: pagination_meta(paginated_suppliers)
+        )
       end
 
       def show

@@ -8,8 +8,12 @@ module Api
         authorize Product
 
         products = filtered_products.includes(:category, image_attachment: :blob).order(:name)
+        paginated_products = paginate(products)
 
-        render_success(products.map { |product| serialize_product(product) })
+        render_success(
+          paginated_products.map { |product| serialize_product(product) },
+          meta: pagination_meta(paginated_products)
+        )
       end
 
       def show

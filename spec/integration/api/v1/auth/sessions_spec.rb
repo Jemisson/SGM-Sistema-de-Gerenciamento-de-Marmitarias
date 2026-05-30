@@ -8,6 +8,36 @@ RSpec.describe "API V1 Authentication", type: :request do
       produces "application/json"
 
       parameter name: :credentials, in: :body, schema: { "$ref" => "#/components/schemas/login_payload" }
+      request_body_example(
+        name: :admin,
+        summary: "Administrador",
+        value: {
+          user: {
+            email: "admin@example.com",
+            password: "password123"
+          }
+        }
+      )
+      request_body_example(
+        name: :manager,
+        summary: "Gerente",
+        value: {
+          user: {
+            email: "manager@example.com",
+            password: "password123"
+          }
+        }
+      )
+      request_body_example(
+        name: :cashier,
+        summary: "Caixa",
+        value: {
+          user: {
+            email: "cashier@example.com",
+            password: "password123"
+          }
+        }
+      )
 
       response "200", "authenticated" do
         let!(:user) { create(:user, email: "caixa@sgm.test", password: "password123") }

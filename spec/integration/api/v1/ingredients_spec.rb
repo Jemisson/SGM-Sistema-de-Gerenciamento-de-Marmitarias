@@ -12,6 +12,8 @@ RSpec.describe "API V1 Ingredients", type: :request do
       parameter name: :supplier_id, in: :query, type: :integer, required: false
       parameter name: :active, in: :query, type: :boolean, required: false
       parameter name: :below_minimum_stock, in: :query, type: :boolean, required: false
+      parameter name: :page, in: :query, type: :integer, required: false
+      parameter name: :per_page, in: :query, type: :integer, required: false
 
       response "200", "ingredients listed" do
         let(:user) { create(:user, :admin) }
@@ -22,6 +24,8 @@ RSpec.describe "API V1 Ingredients", type: :request do
         let(:supplier_id) { nil }
         let(:active) { nil }
         let(:below_minimum_stock) { nil }
+        let(:page) { nil }
+        let(:per_page) { nil }
 
         before do
           create(:ingredient, name: "Arroz")
@@ -32,7 +36,8 @@ RSpec.describe "API V1 Ingredients", type: :request do
                  data: {
                    type: :array,
                    items: { "$ref" => "#/components/schemas/ingredient" }
-                 }
+                 },
+                 meta: { "$ref" => "#/components/schemas/pagination_meta" }
                }
 
         run_test!
@@ -46,6 +51,8 @@ RSpec.describe "API V1 Ingredients", type: :request do
         let(:supplier_id) { nil }
         let(:active) { nil }
         let(:below_minimum_stock) { nil }
+        let(:page) { nil }
+        let(:per_page) { nil }
 
         schema "$ref" => "#/components/schemas/error_response"
 
@@ -61,6 +68,8 @@ RSpec.describe "API V1 Ingredients", type: :request do
         let(:supplier_id) { nil }
         let(:active) { nil }
         let(:below_minimum_stock) { nil }
+        let(:page) { nil }
+        let(:per_page) { nil }
 
         schema "$ref" => "#/components/schemas/error_response"
 

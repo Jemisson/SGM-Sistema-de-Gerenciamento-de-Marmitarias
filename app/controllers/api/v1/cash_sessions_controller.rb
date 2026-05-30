@@ -8,8 +8,12 @@ module Api
         authorize CashSession
 
         cash_sessions = visible_cash_sessions.includes(:opened_by, :closed_by, cash_movements: :user).order(opened_at: :desc, id: :desc)
+        paginated_cash_sessions = paginate(cash_sessions)
 
-        render_success(cash_sessions.map { |cash_session| serialize_cash_session(cash_session) })
+        render_success(
+          paginated_cash_sessions.map { |cash_session| serialize_cash_session(cash_session) },
+          meta: pagination_meta(paginated_cash_sessions)
+        )
       end
 
       def current

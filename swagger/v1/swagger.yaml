@@ -552,6 +552,25 @@ paths:
           application/json:
             schema:
               "$ref": "#/components/schemas/login_payload"
+            examples:
+              admin:
+                summary: Administrador
+                value:
+                  user:
+                    email: admin@example.com
+                    password: password123
+              manager:
+                summary: Gerente
+                value:
+                  user:
+                    email: manager@example.com
+                    password: password123
+              cashier:
+                summary: Caixa
+                value:
+                  user:
+                    email: cashier@example.com
+                    password: password123
   "/api/v1/auth/logout":
     delete:
       summary: Logs out the current user
@@ -611,6 +630,17 @@ paths:
       - Cash Sessions
       security:
       - bearerAuth: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           description: cash sessions listed
@@ -623,6 +653,8 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/cash_session"
+                  meta:
+                    "$ref": "#/components/schemas/pagination_meta"
         '401':
           description: missing or invalid token
           content:
@@ -1042,6 +1074,16 @@ paths:
         required: false
         schema:
           type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           description: financial entries listed
@@ -1054,6 +1096,8 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/financial_entry"
+                  meta:
+                    "$ref": "#/components/schemas/pagination_meta"
         '401':
           description: missing or invalid token
           content:
@@ -1259,6 +1303,16 @@ paths:
         required: false
         schema:
           type: boolean
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           description: ingredients listed
@@ -1271,6 +1325,8 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/ingredient"
+                  meta:
+                    "$ref": "#/components/schemas/pagination_meta"
         '401':
           description: missing or invalid token
           content:
@@ -1478,6 +1534,16 @@ paths:
         required: false
         schema:
           type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           description: menus listed
@@ -1490,6 +1556,8 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/menu"
+                  meta:
+                    "$ref": "#/components/schemas/pagination_meta"
         '401':
           description: missing or invalid token
           content:
@@ -1708,6 +1776,16 @@ paths:
         required: false
         schema:
           type: boolean
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           description: products listed
@@ -1720,6 +1798,8 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/product"
+                  meta:
+                    "$ref": "#/components/schemas/pagination_meta"
         '401':
           description: missing or invalid token
           content:
@@ -1910,6 +1990,16 @@ paths:
         required: false
         schema:
           type: boolean
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           description: recipes listed
@@ -1922,6 +2012,8 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/recipe"
+                  meta:
+                    "$ref": "#/components/schemas/pagination_meta"
         '401':
           description: missing or invalid token
           content:
@@ -1987,6 +2079,17 @@ paths:
       - Recipes
       security:
       - bearerAuth: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           description: recipe found
@@ -2404,6 +2507,17 @@ paths:
       - Sales
       security:
       - bearerAuth: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           description: sales listed
@@ -2416,6 +2530,8 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/sale"
+                  meta:
+                    "$ref": "#/components/schemas/pagination_meta"
         '401':
           description: missing or invalid token
           content:
@@ -2588,6 +2704,16 @@ paths:
         example: '2026-05-31T23:59:59Z'
         schema:
           type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           description: stock movements listed
@@ -2600,6 +2726,8 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/stock_movement"
+                  meta:
+                    "$ref": "#/components/schemas/pagination_meta"
         '401':
           description: missing or invalid token
           content:
@@ -2716,6 +2844,16 @@ paths:
         required: false
         schema:
           type: boolean
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           description: suppliers listed
@@ -2728,6 +2866,8 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/supplier"
+                  meta:
+                    "$ref": "#/components/schemas/pagination_meta"
         '401':
           description: missing or invalid token
           content:
@@ -2901,6 +3041,203 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/error_response"
+  "/api/v1/users":
+    get:
+      summary: Lists users
+      tags:
+      - Users
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: name
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: email
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: role
+        in: query
+        enum:
+        - admin
+        - manager
+        - cashier
+        required: false
+        schema:
+          type: string
+      - name: active
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: users listed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/user"
+                  meta:
+                    "$ref": "#/components/schemas/pagination_meta"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+    post:
+      summary: Creates a user
+      tags:
+      - Users
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: user created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/user"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/user_payload"
+            examples:
+              admin:
+                summary: Administrador
+                value:
+                  user:
+                    name: Administrador SGM
+                    cpf: '33333333333'
+                    role: admin
+                    email: novo.admin@example.com
+                    password: password123
+                    password_confirmation: password123
+                    active: true
+              manager:
+                summary: Gerente
+                value:
+                  user:
+                    name: Gerente SGM
+                    cpf: '44444444444'
+                    role: manager
+                    email: novo.manager@example.com
+                    password: password123
+                    password_confirmation: password123
+                    active: true
+              cashier:
+                summary: Caixa
+                value:
+                  user:
+                    name: Caixa SGM
+                    cpf: '55555555555'
+                    role: cashier
+                    email: novo.cashier@example.com
+                    password: password123
+                    password_confirmation: password123
+                    active: true
+  "/api/v1/users/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Shows a user
+      tags:
+      - Users
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: user found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/user"
+    patch:
+      summary: Updates a user
+      tags:
+      - Users
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: user updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/user"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/user_payload"
+    delete:
+      summary: Deactivates a user
+      tags:
+      - Users
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: user deactivated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/user"
 components:
   securitySchemes:
     bearerAuth:
@@ -2915,16 +3252,72 @@ components:
           type: integer
         name:
           type: string
+          example: Caixa SGM
+        birth_date:
+          type: string
+          format: date
+          nullable: true
+          example: '1992-06-10'
+        cpf:
+          type: string
+          example: '22222222222'
+        phone:
+          type: string
+          nullable: true
+          example: '44999999999'
         email:
           type: string
+          example: cashier@example.com
         role:
           type: string
           enum:
           - admin
           - manager
           - cashier
+          example: cashier
+        gender:
+          type: string
+          nullable: true
+          example: not_informed
+        marital_status:
+          type: string
+          nullable: true
+          example: not_informed
         active:
           type: boolean
+          example: true
+        street:
+          type: string
+          nullable: true
+          example: Avenida Colombo
+        number:
+          type: string
+          nullable: true
+          example: '5790'
+        neighborhood:
+          type: string
+          nullable: true
+          example: Zona 7
+        city:
+          type: string
+          nullable: true
+          example: Maringa
+        state:
+          type: string
+          nullable: true
+          example: PR
+        zip_code:
+          type: string
+          nullable: true
+          example: '87020900'
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
     user_payload:
       type: object
       properties:
@@ -3004,7 +3397,7 @@ components:
           properties:
             email:
               type: string
-              example: caixa@sgm.test
+              example: cashier@example.com
             password:
               type: string
               example: password123

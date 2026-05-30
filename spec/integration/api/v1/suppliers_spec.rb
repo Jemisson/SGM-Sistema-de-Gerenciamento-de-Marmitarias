@@ -9,6 +9,8 @@ RSpec.describe "API V1 Suppliers", type: :request do
       parameter name: :name, in: :query, type: :string, required: false
       parameter name: :cnpj, in: :query, type: :string, required: false
       parameter name: :active, in: :query, type: :boolean, required: false
+      parameter name: :page, in: :query, type: :integer, required: false
+      parameter name: :per_page, in: :query, type: :integer, required: false
 
       response "200", "suppliers listed" do
         let(:user) { create(:user, :admin) }
@@ -16,6 +18,8 @@ RSpec.describe "API V1 Suppliers", type: :request do
         let(:name) { nil }
         let(:cnpj) { nil }
         let(:active) { nil }
+        let(:page) { nil }
+        let(:per_page) { nil }
 
         before do
           create(:supplier, name: "Fornecedor Central")
@@ -26,7 +30,8 @@ RSpec.describe "API V1 Suppliers", type: :request do
                  data: {
                    type: :array,
                    items: { "$ref" => "#/components/schemas/supplier" }
-                 }
+                 },
+                 meta: { "$ref" => "#/components/schemas/pagination_meta" }
                }
 
         run_test!
@@ -37,6 +42,8 @@ RSpec.describe "API V1 Suppliers", type: :request do
         let(:name) { nil }
         let(:cnpj) { nil }
         let(:active) { nil }
+        let(:page) { nil }
+        let(:per_page) { nil }
 
         schema "$ref" => "#/components/schemas/error_response"
 
@@ -49,6 +56,8 @@ RSpec.describe "API V1 Suppliers", type: :request do
         let(:name) { nil }
         let(:cnpj) { nil }
         let(:active) { nil }
+        let(:page) { nil }
+        let(:per_page) { nil }
 
         schema "$ref" => "#/components/schemas/error_response"
 
