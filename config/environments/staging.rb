@@ -10,9 +10,9 @@ Rails.application.routes.default_url_options[:host] =
 secrets_path = Rails.root.join("config/secrets.yml")
 secrets = if secrets_path.exist?
             YAML.safe_load(ERB.new(secrets_path.read).result, aliases: true) || {}
-          else
-            {}
-          end
+else
+  {}
+end
 secret_key_base = ENV["SECRET_KEY_BASE"].presence || secrets.dig(Rails.env, "secret_key_base")
 
 Rails.application.configure do
