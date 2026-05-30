@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/integer/time'
+require "active_support/core_ext/integer/time"
 Rails.application.routes.default_url_options[:host] =
-  ENV.fetch('DEFAULT_URL_HOST', 'https://apisgm.jemison.dev.br')
+  ENV.fetch("DEFAULT_URL_HOST", "https://apisgm.jemison.dev.br")
 
 Rails.application.configure do
   config.enable_reloading = false
