@@ -1,0 +1,63 @@
+name: Deploy Staging
+
+on:
+  workflow_run:
+    workflows:
+      - Ruby on Rails CI
+    branches:
+      - staging
+    types:
+      - completed
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to staging
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    environment:
+      name: staging
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: staging
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev libvips-dev libvips-tools
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          rubygems: default
+          bundler: 4.0.9
+          bundler-cache: true
+
+      - name: Configure SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+
+      - name: Trust deploy host
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${STAGING_DEPLOY_PORT}" "${STAGING_DEPLOY_HOST}" >> ~/.ssh/known_hosts
+        env:
+          STAGING_DEPLOY_HOST: ${{ vars.STAGING_DEPLOY_HOST || '108.181.224.196' }}
+          STAGING_DEPLOY_PORT: ${{ vars.STAGING_DEPLOY_PORT || '22' }}
+
+      - name: Deploy with Kamal
+        run: bin/kamal deploy
+        env:
+          KAMAL_HOSTS: ${{ vars.STAGING_DEPLOY_HOST || '108.181.224.196' }}
+          KAMAL_SSH_USER: ${{ vars.STAGING_DEPLOY_USER || 'staging' }}
+          KAMAL_SSH_PORT: ${{ vars.STAGING_DEPLOY_PORT || '22' }}
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}

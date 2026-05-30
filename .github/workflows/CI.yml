@@ -1,0 +1,90 @@
+name: "Ruby on Rails CI"
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  rspec:
+    name: RSpec
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:11-alpine
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: "postgres://rails:password@localhost:5432/rails_test"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          rubygems: default
+          bundler: 4.0.9
+          bundler-cache: true
+
+      - name: Show versions (debug)
+        run: |
+          ruby -v
+          gem -v
+          bundler -v
+
+      - name: Install system packages (libvips)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips-dev libvips-tools || true
+          sudo apt-get install -y libvips || sudo apt-get install -y libvips42
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Setup database
+        run: |
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
+
+      - name: Run RSpec tests
+        run: bundle exec rspec
+
+  rubocop:
+    name: RuboCop
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          rubygems: default
+          bundler: 4.0.9
+          bundler-cache: true
+
+      - name: Show versions (debug)
+        run: |
+          ruby -v
+          gem -v
+          bundler -v
+
+      - name: Run RuboCop
+        run: bundle exec rubocop
