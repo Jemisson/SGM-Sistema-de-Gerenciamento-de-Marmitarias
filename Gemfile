@@ -22,7 +22,7 @@ group :development, :test, :staging do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "factory_bot_rails"
   gem "faker"
-  gem 'mina', '0.3.8'
+  gem "mina", "0.3.8"
   gem "rspec-rails"
   gem "rswag-specs"
   gem "bundler-audit", require: false
