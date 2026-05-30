@@ -53,10 +53,6 @@ task setup: :remote_environment do
   queue! %(touch "#{deploy_to}/shared/config/database.yml")
   queue  %(echo "-----> Be sure to edit 'shared/config/database.yml'.")
 
-  queue! %(touch "#{deploy_to}/shared/config/master.key")
-  queue! %(chmod 600 "#{deploy_to}/shared/config/master.key")
-  queue  %(echo "-----> Be sure to edit 'shared/config/master.key'.")
-
   queue! %(touch "#{deploy_to}/shared/config/application.yml")
   queue  %(echo "-----> Be sure to edit 'shared/config/application.yml'.")
 
@@ -98,7 +94,6 @@ set :term_mode, nil
 
 set :shared_paths, [
   'public/uploads',
-  'config/master.key',
   'config/database.yml',
   'log',
   'tmp',
