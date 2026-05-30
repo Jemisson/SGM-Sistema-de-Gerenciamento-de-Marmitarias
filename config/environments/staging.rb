@@ -1,10 +1,23 @@
 # frozen_string_literal: true
 
 require "active_support/core_ext/integer/time"
+require "erb"
+require "yaml"
+
 Rails.application.routes.default_url_options[:host] =
   ENV.fetch("DEFAULT_URL_HOST", "https://apisgm.jemison.dev.br")
 
+secrets_path = Rails.root.join("config/secrets.yml")
+secrets = if secrets_path.exist?
+            YAML.safe_load(ERB.new(secrets_path.read).result, aliases: true) || {}
+          else
+            {}
+          end
+secret_key_base = ENV["SECRET_KEY_BASE"].presence || secrets.dig(Rails.env, "secret_key_base")
+
 Rails.application.configure do
+  config.secret_key_base = secret_key_base if secret_key_base.present?
+
   config.enable_reloading = false
   config.eager_load = true
   config.consider_all_requests_local = false
