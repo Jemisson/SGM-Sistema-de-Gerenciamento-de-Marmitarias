@@ -5,7 +5,7 @@ info:
   version: v1
 servers:
   - url: http://localhost:3000
-  - url: https://apiasgm.jemison.dev.br
+  - url: https://apisgm.jemison.dev.br
 tags:
 - name: Auth
   description: Autenticacao, logout, usuario atual e recuperacao de senha
