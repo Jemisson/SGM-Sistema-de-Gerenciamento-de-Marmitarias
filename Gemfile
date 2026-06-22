@@ -25,6 +25,7 @@ group :development, :test, :staging do
   gem "mina", "0.3.8"
   gem "rspec-rails"
   gem "rswag-specs"
+  gem "simplecov", require: false
   gem "bundler-audit", require: false
   gem "brakeman", require: false
   gem "rubocop-rails-omakase", require: false

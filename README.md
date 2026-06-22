@@ -170,6 +170,9 @@ bundle exec rspec
 O projeto possui testes de models, services, policies, requests e integração com a
 documentação OpenAPI.
 
+Mais detalhes sobre execução dos testes e visualização do relatório de cobertura
+estão em [docs/tests_and_coverage.md](docs/tests_and_coverage.md).
+
 ## Qualidade e segurança
 
 Scripts auxiliares disponíveis em `bin/`:

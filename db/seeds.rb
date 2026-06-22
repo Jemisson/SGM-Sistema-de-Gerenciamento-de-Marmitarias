@@ -2,7 +2,10 @@
 # O arquivo e idempotente: cadastros-base sao localizados por chaves naturais e
 # vendas de exemplo usam horarios fixos no dia atual para evitar duplicidade.
 
+require "faker"
+
 password = "password123"
+Faker::Config.random = Random.new(42)
 
 def upsert_user!(email:, name:, cpf:, role:)
   user = User.find_by(email: email) || User.find_by(cpf: cpf) || User.new
@@ -94,6 +97,32 @@ def upsert_menu!(name:, products:)
     menu_item = menu.menu_items.detect { |current| current.product == product } ||
                 menu.menu_items.build(product: product)
     menu_item.assign_attributes(available: true, price_override: nil)
+  end
+
+  menu.save!
+  menu
+end
+
+def upsert_period_menu!(name:, start_date:, end_date:, products:)
+  menu = Menu.find_or_initialize_by(name: name)
+  menu.assign_attributes(
+    start_date: start_date,
+    end_date: end_date,
+    status: end_date < Date.current ? :inactive : :active,
+    active: true
+  )
+
+  menu.menu_items.each do |menu_item|
+    menu_item.mark_for_destruction unless products.include?(menu_item.product)
+  end
+
+  products.each_with_index do |product, index|
+    menu_item = menu.menu_items.detect { |current| current.product == product } ||
+                menu.menu_items.build(product: product)
+    menu_item.assign_attributes(
+      available: true,
+      price_override: index % 5 == 0 ? product.sale_price + 2 : nil
+    )
   end
 
   menu.save!
@@ -287,6 +316,22 @@ product_category = upsert_category!(
   name: "Marmitas",
   description: "Produtos finais vendidos no balcao."
 )
+beverage_category = upsert_category!(
+  name: "Bebidas",
+  description: "Bebidas vendidas junto com as marmitas."
+)
+dessert_category = upsert_category!(
+  name: "Sobremesas",
+  description: "Doces e sobremesas individuais."
+)
+packaging_category = upsert_category!(
+  name: "Embalagens",
+  description: "Embalagens, descartaveis e itens de entrega."
+)
+seasoning_category = upsert_category!(
+  name: "Temperos",
+  description: "Temperos secos, molhos e condimentos."
+)
 
 meat_supplier = upsert_supplier!(
   cnpj: "12345678000190",
@@ -317,6 +362,32 @@ market_supplier = upsert_supplier!(
     zip_code: "87010000"
   }
 )
+
+extra_suppliers = [
+  ["11222333000101", "Hortifruti Norte Parana", "hortifruti"],
+  ["11222333000102", "Cooperativa Graos do Sul", "graos"],
+  ["11222333000103", "Laticinios Campo Verde", "laticinios"],
+  ["11222333000104", "Avicola Bom Corte", "avicola"],
+  ["11222333000105", "Embalagens Noroeste", "embalagens"],
+  ["11222333000106", "Bebidas Avenida", "bebidas"],
+  ["11222333000107", "Temperos Casa Cheia", "temperos"],
+  ["11222333000108", "Doces da Vila", "doces"]
+].map.with_index do |(cnpj, name, slug), index|
+  upsert_supplier!(
+    cnpj: cnpj,
+    attributes: {
+      name: name,
+      phone: "44#{Faker::Number.number(digits: 8)}",
+      email: "contato@#{slug}.example.com",
+      street: Faker::Address.street_name,
+      number: (100 + index * 37).to_s,
+      neighborhood: ["Centro", "Zona 7", "Vila Operaria", "Jardim Alvorada"].fetch(index % 4),
+      city: "Maringa",
+      state: "PR",
+      zip_code: "870#{Faker::Number.number(digits: 5)}"
+    }
+  )
+end
 
 today = Date.current
 
@@ -473,6 +544,58 @@ sauce = upsert_ingredient!(
   }
 )
 
+extra_ingredient_specs = [
+  ["INS-BATATA", "Batata inglesa", side_category, extra_suppliers[0], 7.4, 80, 12, 45],
+  ["INS-MANDIOCA", "Mandioca descascada", side_category, extra_suppliers[0], 8.9, 70, 10, 35],
+  ["INS-PURE", "Flocos para pure", side_category, extra_suppliers[1], 11.5, 55, 8, 180],
+  ["INS-FAROFA", "Farofa temperada", side_category, extra_suppliers[1], 9.6, 50, 7, 210],
+  ["INS-LENTILHA", "Lentilha", side_category, extra_suppliers[1], 12.8, 45, 7, 240],
+  ["INS-GRAO-BICO", "Grao de bico", side_category, extra_suppliers[1], 13.5, 42, 6, 240],
+  ["INS-QUINOA", "Quinoa em graos", side_category, extra_suppliers[1], 21.9, 34, 5, 180],
+  ["INS-BROCOLIS", "Brocolis congelado", side_category, extra_suppliers[0], 14.2, 38, 6, 120],
+  ["INS-COUVE", "Couve fatiada", side_category, extra_suppliers[0], 6.7, 30, 5, 8],
+  ["INS-ABOBORA", "Abobora cabotia", side_category, extra_suppliers[0], 5.8, 52, 8, 25],
+  ["INS-PATINHO", "Patinho moido", protein_category, meat_supplier, 32.5, 48, 8, 18],
+  ["INS-COSTELA", "Costela bovina desfiada", protein_category, meat_supplier, 27.9, 36, 6, 15],
+  ["INS-FILE-TILAPIA", "File de tilapia", protein_category, extra_suppliers[3], 34.9, 34, 6, 16],
+  ["INS-OVO", "Ovo cozido", protein_category, extra_suppliers[3], 14.4, 28, 5, 20],
+  ["INS-QUEIJO", "Queijo mussarela", protein_category, extra_suppliers[2], 31.2, 25, 4, 30],
+  ["INS-CREME-LEITE", "Creme de leite", side_category, extra_suppliers[2], 9.8, 40, 6, 120],
+  ["INS-CURRY", "Molho curry", seasoning_category, extra_suppliers[6], 15.7, 30, 5, 180],
+  ["INS-BARBECUE", "Molho barbecue", seasoning_category, extra_suppliers[6], 12.6, 32, 5, 180],
+  ["INS-ERVAS", "Mix de ervas", seasoning_category, extra_suppliers[6], 18.9, 20, 3, 240],
+  ["INS-MARMITEX-P", "Embalagem marmitex P", packaging_category, extra_suppliers[4], 0.62, 800, 120, 365],
+  ["INS-MARMITEX-M", "Embalagem marmitex M", packaging_category, extra_suppliers[4], 0.74, 900, 150, 365],
+  ["INS-MARMITEX-G", "Embalagem marmitex G", packaging_category, extra_suppliers[4], 0.88, 650, 100, 365],
+  ["INS-COPO", "Copo descartavel", packaging_category, extra_suppliers[4], 0.18, 1_200, 200, 365],
+  ["INS-GUARDANAPO", "Guardanapo", packaging_category, extra_suppliers[4], 0.04, 2_500, 400, 365]
+].map do |code, name, category, supplier, purchase_price, current_stock, minimum_stock, expires_in|
+  upsert_ingredient!(
+    code: code,
+    attributes: {
+      name: name,
+      category: category,
+      supplier: supplier,
+      unit: category == packaging_category ? "un" : "kg",
+      current_stock: current_stock,
+      minimum_stock: minimum_stock,
+      purchase_price: purchase_price,
+      manufacturing_date: today - ((code.sum % 20) + 10).days,
+      expiration_date: today + expires_in.days,
+      received_at: today - ((code.sum % 8) + 1).days,
+      notes: "Insumo gerado pelo seed para ampliar dados de relatorios."
+    }
+  )
+end
+
+ingredients_by_code = Ingredient.where(code: [
+  "INS-BATATA", "INS-MANDIOCA", "INS-PURE", "INS-FAROFA", "INS-LENTILHA",
+  "INS-GRAO-BICO", "INS-QUINOA", "INS-BROCOLIS", "INS-COUVE", "INS-ABOBORA",
+  "INS-PATINHO", "INS-COSTELA", "INS-FILE-TILAPIA", "INS-OVO", "INS-QUEIJO",
+  "INS-CREME-LEITE", "INS-CURRY", "INS-BARBECUE", "INS-ERVAS",
+  "INS-MARMITEX-P", "INS-MARMITEX-M", "INS-MARMITEX-G"
+]).index_by(&:code)
+
 chicken_lunch = upsert_product!(
   code: "PROD-MARMITA-FRANGO",
   attributes: {
@@ -583,9 +706,48 @@ upsert_recipe!(
   ]
 )
 
+extra_product_specs = [
+  ["PROD-MARMITA-PATINHO", "Marmita de patinho", "Arroz, lentilha, patinho moido e couve.", 31.9, [[rice, 0.160], [ingredients_by_code["INS-LENTILHA"], 0.120], [ingredients_by_code["INS-PATINHO"], 0.180], [ingredients_by_code["INS-COUVE"], 0.070]]],
+  ["PROD-MARMITA-TILAPIA", "Marmita de tilapia", "Tilapia grelhada com quinoa, legumes e salada.", 34.9, [[ingredients_by_code["INS-QUINOA"], 0.130], [ingredients_by_code["INS-FILE-TILAPIA"], 0.180], [vegetables, 0.120], [salad, 0.080]]],
+  ["PROD-MARMITA-COSTELA", "Marmita de costela", "Costela desfiada, mandioca, arroz e farofa.", 33.9, [[rice, 0.140], [ingredients_by_code["INS-MANDIOCA"], 0.160], [ingredients_by_code["INS-COSTELA"], 0.180], [ingredients_by_code["INS-FAROFA"], 0.050]]],
+  ["PROD-MARMITA-STROGONOFF", "Marmita strogonoff", "Frango ao creme, arroz e batata.", 30.9, [[rice, 0.180], [chicken, 0.170], [ingredients_by_code["INS-CREME-LEITE"], 0.080], [ingredients_by_code["INS-BATATA"], 0.120]]],
+  ["PROD-MARMITA-CURRY", "Marmita curry de frango", "Frango ao curry com grao de bico e legumes.", 32.9, [[chicken, 0.180], [ingredients_by_code["INS-CURRY"], 0.050], [ingredients_by_code["INS-GRAO-BICO"], 0.120], [vegetables, 0.120]]],
+  ["PROD-MARMITA-BARBECUE", "Marmita barbecue", "Lombo ao barbecue, arroz, feijao e abobora.", 32.5, [[rice, 0.160], [beans, 0.110], [pork, 0.180], [ingredients_by_code["INS-BARBECUE"], 0.050], [ingredients_by_code["INS-ABOBORA"], 0.090]]],
+  ["PROD-MARMITA-OMELETE", "Marmita omelete", "Ovo, queijo, legumes e salada.", 25.9, [[ingredients_by_code["INS-OVO"], 0.180], [ingredients_by_code["INS-QUEIJO"], 0.060], [vegetables, 0.130], [salad, 0.090]]],
+  ["PROD-MARMITA-VEGETARIANA", "Marmita vegetariana", "Grao de bico, quinoa, brocolis e salada.", 28.9, [[ingredients_by_code["INS-GRAO-BICO"], 0.150], [ingredients_by_code["INS-QUINOA"], 0.120], [ingredients_by_code["INS-BROCOLIS"], 0.120], [salad, 0.080]]],
+  ["PROD-MARMITA-EXECUTIVA-G", "Marmita executiva grande", "Arroz, feijao, carne, frango e legumes.", 38.9, [[rice, 0.220], [beans, 0.150], [beef, 0.140], [chicken, 0.130], [vegetables, 0.120]]],
+  ["PROD-MARMITA-EXECUTIVA-P", "Marmita executiva pequena", "Porcao reduzida de arroz, feijao, proteina e salada.", 21.9, [[rice, 0.120], [beans, 0.080], [chicken, 0.110], [salad, 0.060]]],
+  ["PROD-MARMITA-BROCOLIS", "Marmita frango com brocolis", "Frango, arroz, brocolis e ervas.", 29.9, [[rice, 0.160], [chicken, 0.180], [ingredients_by_code["INS-BROCOLIS"], 0.130], [ingredients_by_code["INS-ERVAS"], 0.015]]],
+  ["PROD-MARMITA-PURE", "Marmita carne com pure", "Carne bovina com pure e legumes.", 31.5, [[beef, 0.180], [ingredients_by_code["INS-PURE"], 0.160], [vegetables, 0.120], [sauce, 0.050]]],
+  ["PROD-MARMITA-PENNE-FRANGO", "Penne com frango", "Penne ao molho com frango e queijo.", 30.5, [[pasta, 0.220], [sauce, 0.100], [chicken, 0.150], [ingredients_by_code["INS-QUEIJO"], 0.050]]],
+  ["PROD-MARMITA-LENTILHA", "Marmita de lentilha", "Arroz, lentilha, ovo e couve.", 26.9, [[rice, 0.150], [ingredients_by_code["INS-LENTILHA"], 0.150], [ingredients_by_code["INS-OVO"], 0.100], [ingredients_by_code["INS-COUVE"], 0.070]]],
+  ["PROD-MARMITA-ABOBORA", "Marmita lombo com abobora", "Lombo, abobora, arroz e salada.", 30.9, [[pork, 0.180], [ingredients_by_code["INS-ABOBORA"], 0.150], [rice, 0.140], [salad, 0.070]]]
+]
+
+extra_products = extra_product_specs.map do |code, name, description, sale_price, recipe_items|
+  product = upsert_product!(
+    code: code,
+    attributes: {
+      name: name,
+      description: description,
+      category: product_category,
+      sale_price: sale_price
+    }
+  )
+
+  upsert_recipe!(
+    product: product,
+    name: "Receita #{name.downcase}",
+    description: "Composicao padrao de #{name.downcase}.",
+    items: recipe_items.map { |ingredient, quantity| { ingredient: ingredient, quantity: quantity, unit: ingredient.unit } }
+  )
+
+  product
+end
+
 menu = upsert_menu!(
   name: "Cardapio da Semana",
-  products: [chicken_lunch, beef_lunch, fit_lunch, pasta_lunch, pork_lunch]
+  products: [chicken_lunch, beef_lunch, fit_lunch, pasta_lunch, pork_lunch, *extra_products.first(10)]
 )
 
 products_for_history = [
@@ -593,11 +755,26 @@ products_for_history = [
   beef_lunch,
   fit_lunch,
   pasta_lunch,
-  pork_lunch
+  pork_lunch,
+  *extra_products
 ]
+all_ingredients_for_history = [rice, beans, chicken, beef, salad, pasta, vegetables, pork, sauce, *extra_ingredient_specs]
 payment_methods = %i[cash pix debit_card credit_card]
 historical_start_date = today - 180.days
 historical_end_date = today - 1.day
+
+(historical_start_date.beginning_of_week..historical_end_date).step(7).each_with_index do |week_start, index|
+  week_end = [week_start + 5.days, historical_end_date].min
+  next if week_end < historical_start_date
+
+  weekly_products = products_for_history.rotate(index % products_for_history.size).first(8 + (index % 8))
+  upsert_period_menu!(
+    name: "Cardapio historico #{week_start.iso8601}",
+    start_date: week_start,
+    end_date: week_end,
+    products: weekly_products
+  )
+end
 
 (historical_start_date..historical_end_date).each do |date|
   next if date.sunday?
@@ -628,6 +805,27 @@ historical_end_date = today - 1.day
     )
   end
 
+  extra_sales_count = 10 + (date.yday % 9)
+  dinner_peak = Time.zone.local(date.year, date.month, date.day, 14, 10, 0)
+
+  extra_sales_count.times do |index|
+    product = products_for_history[(date.yday * 3 + index * 2) % products_for_history.size]
+    extra_product = products_for_history[(date.yday + index + 7) % products_for_history.size]
+    quantity = 1 + ((date.wday + index) % 5 == 0 ? 1 : 0)
+    sold_at = dinner_peak + (index * 7).minutes + ((date.yday + index) % 4).minutes
+    items = [{ product_id: product.id, quantity: quantity }]
+    items << { product_id: extra_product.id, quantity: 1 } if index % 6 == 0
+
+    ensure_historical_sale!(
+      user: cashier,
+      cash_session: session,
+      sold_at: sold_at,
+      payment_method: payment_methods[(date.yday + index + 1) % payment_methods.size],
+      items: items,
+      status: index % 43 == 0 ? :canceled : :confirmed
+    )
+  end
+
   if date.monday?
     ensure_historical_financial_entry!(
       user: manager,
@@ -639,7 +837,7 @@ historical_end_date = today - 1.day
       occurred_at: Time.zone.local(date.year, date.month, date.day, 9, 30, 0)
     )
 
-    [rice, beans, chicken, beef, salad, pasta, vegetables, pork, sauce].each_with_index do |ingredient, index|
+    all_ingredients_for_history.each_with_index do |ingredient, index|
       StockMovement.find_or_create_by!(
         ingredient: ingredient,
         user: manager,
@@ -647,7 +845,7 @@ historical_end_date = today - 1.day
         occurred_at: Time.zone.local(date.year, date.month, date.day, 9, 15, index),
         reason: "Reposicao semanal seed #{date.iso8601}"
       ) do |movement|
-        movement.quantity = 18 + ((date.yday + index) % 12)
+        movement.quantity = ingredient.unit == "un" ? 120 + ((date.yday + index) % 90) : 18 + ((date.yday + index) % 12)
         movement.unit_cost = ingredient.purchase_price
       end
     end
@@ -713,15 +911,7 @@ historical_end_date = today - 1.day
 end
 
 ensure_seed_stock!(
-  rice => 1_100,
-  beans => 800,
-  chicken => 900,
-  beef => 700,
-  salad => 450,
-  pasta => 600,
-  vegetables => 500,
-  pork => 500,
-  sauce => 420
+  all_ingredients_for_history.index_with { |ingredient| ingredient.unit == "un" ? 1_500 : 700 }
 )
 
 first_sale_at = Time.zone.now.change(hour: 11, min: 30, sec: 0)
